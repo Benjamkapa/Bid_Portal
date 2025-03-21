@@ -4,7 +4,6 @@ import TableComponent from "../../components/grid/GamesTable";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import GamesModal from "../../components/modal/GamesModal";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const Games = () => {
@@ -36,14 +35,10 @@ const Games = () => {
       }
     };
 
-  useEffect(() => {
-    fetchGames();
-  }, []);
-
-
+    fetchGames(); // <-- Call the fetchGames function here
+  }, []); // <-- Closing bracket for useEffect
 
   // Open and close modal
-
   const handleOpenModal = (game:any) => {
     setSelectedGame(game); 
     setIsModalOpen(true);
@@ -52,7 +47,6 @@ const Games = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
 
   return (
     <div>
@@ -64,22 +58,17 @@ const Games = () => {
       </div>
 
       {loading ? (
-
         <div className="mt-5">
-        <Skeleton count={8} height={35} />
-      </div>
+          <Skeleton count={8} height={35} />
+        </div>
       ) : (
         <TableComponent data={games} handleOpenModal={handleOpenModal} />
       )}
       {/* <GamesModal isOpen={isModalOpen}  onClose={handleCloseModal} refreshGames={fetchGames} /> */}
 
-      
       <GamesModal isOpen={isModalOpen} onClose={handleCloseModal} game={selectedGame}  refreshGames={fetchGames} />
-
-
-
     </div>
   );
-};
+}
 
 export default Games;

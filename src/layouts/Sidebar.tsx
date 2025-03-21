@@ -2,13 +2,14 @@
 import { NavLink } from "react-router-dom";
 import {
   BsFillGearFill,
-  BsFillGrid3X3GapFill,
+  // BsFillGrid3X3GapFill,
   BsListCheck,
+  BsShieldLockFill,
   BsMenuButtonWideFill,
-  BsPeopleFill,
+  // BsPeopleFill,
 } from "react-icons/bs";
-import { FiMenu, FiHome } from "react-icons/fi";
-import { IoGameController } from "react-icons/io5";
+import { FiChevronRight, FiChevronLeft, FiHome } from "react-icons/fi";
+// import { IoGameController } from "react-icons/io5";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -17,12 +18,14 @@ interface SidebarProps {
 
 const menuItems = [
   { icon: <FiHome size={24} />, label: "Dashboard", path: "/" },
-  { icon: <IoGameController size={24} />, label: "Games", path: "/games" },
+  // { icon: <IoGameController size={24} />, label: "Games", path: "/games" },
   // { icon: <BsFillGrid3X3GapFill size={24} />, label: "Categories", path: "/categories" },
-  { icon: <BsPeopleFill size={24} />, label: "Players", path: "/players" },
-  { icon: <BsListCheck size={24} />, label: "Transactions", path: "/transactions" },
-  { icon: <BsMenuButtonWideFill size={24} />, label: "Reports", path: "/reports" },
+  // { icon: <BsPeopleFill size={24} />, label: "Players", path: "/players" },
+  // { icon: <BsShieldLockFill size={24} />, label: "Documents", path: "/validate-documents" },
+  { icon: <BsListCheck size={24} />, label: "Tender Details", path: "/tender-details" },
+  // { icon: <BsMenuButtonWideFill size={24} />, label: "Reports", path: "/reports" },
   { icon: <BsFillGearFill size={24} />, label: "Settings", path: "/settings" },
+  
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
@@ -36,9 +39,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
       <button
         className="text-white mb-6 p-2 bg-gray-700 rounded-md flex items-center justify-between cursor-pointer"
         onClick={() => setIsCollapsed(!isCollapsed)}
-      >
-        {!isCollapsed && <span className="text-yellow-500 font-bold text-lg">Bonanza</span>}
-        <FiMenu size={24} />
+      > 
+        {!isCollapsed && <span className="text-blue-500 font-bold text-lg">Bonanza</span>}
+        {isCollapsed ? <FiChevronRight size={24} /> : <FiChevronLeft size={24} />}
       </button>
 
       {/* Menu Items */}
@@ -49,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
               to={item.path}
               className={({ isActive }) =>
                 `flex items-center space-x-2 p-2 rounded-md transition-all duration-200 ${
-                  isActive ? "bg-yellow-500 text-black font-bold" : "hover:bg-gray-700"
+                  isActive ? "bg-blue-500 text-black font-bold" : "hover:bg-gray-700"
                 }`
               }
             >
@@ -59,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
 
             {/* Tooltip (Only visible when collapsed) */}
             {isCollapsed && (
-              <span className="absolute left-12 bg-black text-white text-sm px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="absolute left-10 bg-black text-white text-sm px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 {item.label}
               </span>
             )}
