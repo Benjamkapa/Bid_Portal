@@ -8,14 +8,14 @@ import axios from 'axios';
 type Document = {
   id: number;
   beneficiary: string;
-  tenderNumber: string;
+  tender_number: string;
   date: string;
-  guaranteeNo: string;
+  guarantee_no: string;
   guarantor: string;
   applicant: string;
-  tenderAmount: string;
-  expiryDate: string;
-  url: string;
+  tender_amount: string;
+  expiry_date: string;
+  document_url: string;
 };
 
 const formatCurrency = (amount: number) => {
@@ -38,7 +38,7 @@ const Documents: React.FC = () => {
     const fetchDocuments = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('https://api.example.com/documents'); // Replace with your endpoint URL
+        const response = await axios.get('http://197.248.122.31:3000/api/tender/all-tenders?status=pending'); // Replace with your endpoint URL
         setDocuments(response.data);
       } catch (error) {
         console.error('Error fetching documents:', error);
@@ -52,7 +52,7 @@ const Documents: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`https://api.example.com/documents/${id}`); // Replace with your endpoint URL
+      await axios.delete(`http://197.248.122.31:3000/api/tender/${id}`); // Replace with your endpoint URL
       setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== id));
       toast.success('Document deleted successfully');
     } catch (error) {
@@ -62,7 +62,7 @@ const Documents: React.FC = () => {
   };
 
   const filteredDocuments = documents.filter((document) =>
-    document.tenderNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    document.tender_number.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -81,7 +81,7 @@ const Documents: React.FC = () => {
         />
       </div>
       {loading ? (
-        <Skeleton count={6} height={20} />
+        <Skeleton count={10} height={40} />
       ) : (
         <table className='min-w-full bg-white'>
           <thead>
@@ -101,17 +101,17 @@ const Documents: React.FC = () => {
             {filteredDocuments.map((document) => (
               <tr key={document.id} className='text-center'>
                 <td className='py-2 px-4 border-b'>{document.beneficiary}</td>
-                <td className='py-2 px-4 border-b'>{document.tenderNumber}</td>
-                <td className='py-2 px-4 border-b'>{document.date}</td>
-                <td className='py-2 px-4 border-b'>{document.guaranteeNo}</td>
+                <td className='py-2 px-4 border-b'>{document.tender_number}</td>
+                <td className='py-2 px-4 border-b'>{new Date(document.date).toLocaleDateString()}</td>
+                <td className='py-2 px-4 border-b'>{document.guarantee_no}</td>
                 <td className='py-2 px-4 border-b'>{document.guarantor}</td>
                 <td className='py-2 px-4 border-b'>{document.applicant}</td>
-                <td className='py-2 px-4 border-b'>{formatCurrency(Number(document.tenderAmount))}</td>
-                <td className='py-2 px-4 border-b'>{document.expiryDate}</td>
+                <td className='py-2 px-4 border-b'>{formatCurrency(Number(document.tender_amount))}</td>
+                <td className='py-2 px-4 border-b'>{new Date(document.expiry_date).toLocaleDateString()}</td>
                 <td className='py-2 px-4 border-b space-x-2'>
                   <div className='flex justify-center space-x-2'>
                     <a
-                      href={document.url}
+                      href={document.document_url}
                       download
                       className='text-blue-500 hover:text-blue-700'
                     >

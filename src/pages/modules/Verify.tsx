@@ -8,14 +8,14 @@ import axios from 'axios';
 type Document = {
   id: number;
   beneficiary: string;
-  tenderNumber: string;
+  tender_number: string;
   date: string;
-  guaranteeNo: string;
+  guarantee_no: string;
   guarantor: string;
   applicant: string;
-  tenderAmount: string;
-  expiryDate: string;
-  url: string;
+  tender_amount: string;
+  expiry_date: string;
+  document_url: string;
   verified: boolean;
 };
 
@@ -28,7 +28,7 @@ const VerifyDocuments: React.FC = () => {
     const fetchDocuments = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('https://api.example.com/documents'); // Replace with your endpoint URL
+        const response = await axios.get('http://197.248.122.31:3000/api/tender/all-tenders?status=pending'); // Replace with your endpoint URL
         setDocuments(response.data);
       } catch (error) {
         console.error('Error fetching documents:', error);
@@ -82,7 +82,7 @@ const VerifyDocuments: React.FC = () => {
   };
 
   const filteredDocuments = documents.filter((document) =>
-    document.tenderNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    document.tender_number.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -123,13 +123,13 @@ const VerifyDocuments: React.FC = () => {
               {filteredDocuments.map((document) => (
                 <tr key={document.id} className='text-center'>
                   <td className='py-2 px-4 border-b'>{document.beneficiary}</td>
-                  <td className='py-2 px-4 border-b'>{document.tenderNumber}</td>
+                  <td className='py-2 px-4 border-b'>{document.tender_number}</td>
                   <td className='py-2 px-4 border-b'>{formatDate(document.date)}</td>
-                  <td className='py-2 px-4 border-b'>{document.guaranteeNo}</td>
+                  <td className='py-2 px-4 border-b'>{document.guarantee_no}</td>
                   <td className='py-2 px-4 border-b'>{document.guarantor}</td>
                   <td className='py-2 px-4 border-b'>{document.applicant}</td>
-                  <td className='py-2 px-4 border-b'>{formatCurrency(Number(document.tenderAmount))}</td>
-                  <td className='py-2 px-4 border-b'>{formatDate(document.expiryDate)}</td>
+                  <td className='py-2 px-4 border-b'>{formatCurrency(Number(document.tender_amount))}</td>
+                  <td className='py-2 px-4 border-b'>{formatDate(document.expiry_date)}</td>
                   <td className='py-2 px-4 border-b'>
                     {document.verified ? (
                       <span className='text-green-500'>Verified</span>
@@ -140,7 +140,7 @@ const VerifyDocuments: React.FC = () => {
                   <td className='py-2 px-4 border-b'>
                     <div className='flex space-x-2'>
                       <a
-                        href={document.url}
+                        href={document.document_url}
                         target='_blank'
                         rel='noopener noreferrer'
                         className='text-blue-500 hover:text-blue-700'
