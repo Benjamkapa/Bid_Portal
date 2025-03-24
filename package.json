@@ -9,17 +9,18 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "proxy": "http://197.248.122.31:3000",
   "dependencies": {
     "@tailwindcss/vite": "^4.0.14",
     "@tanstack/react-table": "^8.21.2",
     "axios": "^1.8.3",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
     "react-loading-skeleton": "^3.5.0",
-    "react-modal": "^3.16.3",
     "react-router-dom": "^7.3.0",
     "tailwindcss": "^4.0.14"
   },

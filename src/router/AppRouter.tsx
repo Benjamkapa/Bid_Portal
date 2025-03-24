@@ -5,14 +5,14 @@ import AdminDashboard from "../pages/dashboard/Dashboard";
 import Login from "../pages/Auth/Login";
 import Logon from "../pages/Auth/Logon";
 import ForgotPassword from "../pages/Auth/ForgotPassword";
-import Players from "../pages/players/Players";
-import Games from "../pages/games/Games";
-import Settings from "../pages/settings/Settings";
-import Reports from "../pages/reports/Reports";
-import GameDetails from "../pages/games/GameDetails";
+import VerifyDocuments from "../pages/modules/Verify";
+import TenderUploads from "../pages/modules/TenderUploads";
 import PrivateRoute from "../components/PrivateRoute";
-import ValidateDocuments from "../pages/Auth/ValidateDocument";
-import TenderDetailsPage from "../pages/Tenders/TenderDetailsPage";
+import Documents from "../pages/modules/Documents";
+import Institution from "../pages/modules/Institution";
+import Transaction from "../pages/modules/Transaction";
+import UserGroups from "../pages/modules/UserGroups";
+import Users from "../pages/modules/Users";
 
 const router = createBrowserRouter([
   {
@@ -30,78 +30,74 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-    //   <PrivateRoute>
+      // <PrivateRoute>
         <Home />
-    //   </PrivateRoute>
+      // </PrivateRoute>
     ),
     errorElement: <div>Error, Page not found</div>,
     children: [
       {
-        path: "/",
-        element: <Login />,
-      },
-      {
-        path: "/games",
-        element: (
-          <PrivateRoute>
-            <Games />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: "/games/:gameId",
-        element: (
-          <PrivateRoute>
-            <GameDetails />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: "/players",
-        element: (
-          <PrivateRoute>
-            <Players />
-          </PrivateRoute>
-        ),
-      },
-      {
         path: "/dashboard",
         element: (
-        //   <PrivateRoute>
+          // <PrivateRoute>
             <AdminDashboard />
-        //   </PrivateRoute>
+          //  </PrivateRoute>
         ),
       },
       {
-        path: "/tender-details",
+        path: "/uploads",
         element: (
-        //   <PrivateRoute>
-            <TenderDetailsPage />
-        //   </PrivateRoute>
+          // <PrivateRoute>
+            <TenderUploads />
+          // </PrivateRoute>
         ),
       },
       {
-        path: "/reports",
+        path: "/documents",
         element: (
-          <PrivateRoute>
-            <Reports />
-          </PrivateRoute>
+        //  <PrivateRoute>
+            <Documents />
+        //  </PrivateRoute>
         ),
       },
       {
-        path: "/settings",
+        path: "/verify",
         element: (
-          <PrivateRoute>
-            <Settings />
-          </PrivateRoute>
+          // <PrivateRoute>
+            <VerifyDocuments />
+          // </PrivateRoute>
         ),
       },
       {
-        path: "/validate-documents",
+        path: "/institutions",
         element: (
-          <PrivateRoute>
-            <ValidateDocuments />
-          </PrivateRoute>
+          // <PrivateRoute>
+            <Institution />
+          // </PrivateRoute>
+        ),
+      },
+      {
+        path: "/transactions",
+        element: (
+          // <PrivateRoute>
+            <Transaction />
+          // </PrivateRoute>
+        ),
+      },
+      {
+        path: "/user-groups",
+        element: (
+          // <PrivateRoute>
+            <UserGroups />
+          // </PrivateRoute>
+        ),
+      },
+      {
+        path: "/users",
+        element: (
+          // <PrivateRoute>
+            <Users />
+          // </PrivateRoute>
         ),
       },
     ],
@@ -109,3 +105,4 @@ const router = createBrowserRouter([
 ]);
 
 export default router;
+

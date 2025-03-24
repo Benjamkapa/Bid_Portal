@@ -5,25 +5,34 @@ import gameLogo from "../../assets/images/game-logo.png";
 import axios from 'axios';
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    error: ''
+  });
   const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const endpoint = 'http://197.248.122.31:3000/api/auth/login';
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJOT1JNQUwiLCJpYXQiOjE3NDI1NDE2NzQsImV4cCI6MTc0MjYyODA3NH0.tVPyN3FN29OcJn-uxrt7xADfqvNUi6olqGEp2ZA_OjE';
+    const endpoint = '/api/admin/login';
+    // http://197.248.122.31:3000
     
     try {
       const response = await axios.get(endpoint, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         },
         params: {
-          email,
-          password
+          email: formData.email,
+          password: formData.password
         }
       });
       const { token: responseToken, user } = response.data;
@@ -32,7 +41,10 @@ const Login: React.FC = () => {
       localStorage.setItem('user', JSON.stringify(user));
       navigate('/dashboard');
     } catch (error) {
-      setError('Invalid email or password');
+      setFormData({
+        ...formData,
+        error: 'Invalid email or password'
+      });
     }
   };
 
@@ -43,13 +55,14 @@ const Login: React.FC = () => {
           <img src={gameLogo} className='h-[90px] mx-auto' alt="game logo" />
           <p className='text-xl font-bold'>Login</p>
         </div>
-        {error && <p className='text-red-500 text-center'>{error}</p>}
+        {formData.error && <p className='text-red-500 text-center'>{formData.error}</p>}
         <div>
           <p className='text-sm font-bold'>Email Address</p>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder='Enter email'
             className='p-2 w-full rounded border'
           />
@@ -58,8 +71,9 @@ const Login: React.FC = () => {
           <p className='text-sm font-bold'>Password</p>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             placeholder='Enter password'
             className='p-2 w-full rounded border'
           />

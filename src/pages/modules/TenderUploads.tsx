@@ -5,42 +5,56 @@ import Button from '../../components/button/Button';
 
 const API_URL = 'http://197.248.122.31:3000/api/tender/add-tender';
 
-const TenderDetailsPage: React.FC = () => {
-  const [beneficiary, setBeneficiary] = useState('');
-  const [tenderNumber, setTenderNumber] = useState('');
-  const [date, setDate] = useState('');
-  const [guaranteeNo, setGuaranteeNo] = useState('');
-  const [guarantor, setGuarantor] = useState('');
-  const [applicant, setApplicant] = useState('');
-  const [tenderAmount, setTenderAmount] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [file, setFile] = useState<File | null>(null);
+const TenderUploads: React.FC = () => {
+  const [formData, setFormData] = useState({
+    beneficiary: '',
+    tenderNumber: '',
+    date: '',
+    guaranteeNo: '',
+    guarantor: '',
+    applicant: '',
+    tenderAmount: '',
+    expiryDate: '',
+    file: null as File | null,
+  });
   const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
-    setFile(selectedFile);
+    setFormData({
+      ...formData,
+      file: selectedFile,
+    });
   };
+//   console.log(formData)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem('authToken');
     try {
       setLoading(true);
-      const formData = new FormData();
-      formData.append('beneficiary', beneficiary);
-      formData.append('tender_number', tenderNumber);
-      formData.append('date', date);
-      formData.append('guarantee_no', guaranteeNo);
-      formData.append('guarantor', guarantor);
-      formData.append('applicant', applicant);
-      formData.append('tender_amount', tenderAmount);
-      formData.append('expiry_date', expiryDate);
-      if (file) {
-        formData.append('document', file);
+      const data = new FormData();
+      data.append('beneficiary', formData.beneficiary);
+      data.append('tender_number', formData.tenderNumber);
+      data.append('date', formData.date);
+      data.append('guarantee_no', formData.guaranteeNo);
+      data.append('guarantor', formData.guarantor);
+      data.append('applicant', formData.applicant);
+      data.append('tender_amount', formData.tenderAmount);
+      data.append('expiry_date', formData.expiryDate);
+      if (formData.file) {
+        data.append('document', formData.file);
       }
 
-      await axios.post(API_URL, formData, {
+      await axios.post(API_URL, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
@@ -49,15 +63,17 @@ const TenderDetailsPage: React.FC = () => {
 
       toast.success('Tender document uploaded successfully');
       // Reset form fields
-      setBeneficiary('');
-      setTenderNumber('');
-      setDate('');
-      setGuaranteeNo('');
-      setGuarantor('');
-      setApplicant('');
-      setTenderAmount('');
-      setExpiryDate('');
-      setFile(null);
+      setFormData({
+        beneficiary: '',
+        tenderNumber: '',
+        date: '',
+        guaranteeNo: '',
+        guarantor: '',
+        applicant: '',
+        tenderAmount: '',
+        expiryDate: '',
+        file: null,
+      });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || 'Error processing request');
@@ -71,11 +87,11 @@ const TenderDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className='bg-gray-800 min-h-screen h-full p-5'>
+    <div className='min-h-screenp-5'>
       <div className='flex justify-between items-center mb-5'>
-        <h1 className='text-2xl font-bold text-white'>Upload Tender Document</h1>
+        <h1 className='text-2xl font-bold mx-auto text-center'>Upload Tender Document</h1>
       </div>
-      <form onSubmit={handleSubmit} autoComplete='off' className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-white rounded p-5 w-full max-w-4xl mx-auto'>
+      <form onSubmit={handleSubmit} autoComplete='off' className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-400 rounded p-5 w-full max-w-4xl mx-auto'>
         <div>
           <p>Beneficiary</p>
           <input
@@ -83,19 +99,19 @@ const TenderDetailsPage: React.FC = () => {
             name='beneficiary'
             placeholder='Enter beneficiary'
             className='border w-full p-2 rounded focus:border-red-500'
-            value={beneficiary}
-            onChange={(e) => setBeneficiary(e.target.value)}
+            value={formData.beneficiary}
+            onChange={handleChange}
           />
         </div>
         <div>
           <p>Tender Number</p>
           <input
             type='text'
-            name='tender_number'
+            name='tenderNumber'
             placeholder='Enter tender number'
             className='border w-full p-2 rounded focus:border-red-500'
-            value={tenderNumber}
-            onChange={(e) => setTenderNumber(e.target.value)}
+            value={formData.tenderNumber}
+            onChange={handleChange}
           />
         </div>
         <div>
@@ -104,19 +120,19 @@ const TenderDetailsPage: React.FC = () => {
             type='date'
             name='date'
             className='border w-full p-2 rounded focus:border-red-500'
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={formData.date}
+            onChange={handleChange}
           />
         </div>
         <div>
           <p>Guarantee No</p>
           <input
             type='text'
-            name='guarantee_no'
+            name='guaranteeNo'
             placeholder='Enter guarantee number'
             className='border w-full p-2 rounded focus:border-red-500'
-            value={guaranteeNo}
-            onChange={(e) => setGuaranteeNo(e.target.value)}
+            value={formData.guaranteeNo}
+            onChange={handleChange}
           />
         </div>
         <div>
@@ -126,8 +142,8 @@ const TenderDetailsPage: React.FC = () => {
             name='guarantor'
             placeholder='Enter guarantor'
             className='border w-full p-2 rounded focus:border-red-500'
-            value={guarantor}
-            onChange={(e) => setGuarantor(e.target.value)}
+            value={formData.guarantor}
+            onChange={handleChange}
           />
         </div>
         <div>
@@ -137,29 +153,29 @@ const TenderDetailsPage: React.FC = () => {
             name='applicant'
             placeholder='Enter applicant'
             className='border w-full p-2 rounded focus:border-red-500'
-            value={applicant}
-            onChange={(e) => setApplicant(e.target.value)}
+            value={formData.applicant}
+            onChange={handleChange}
           />
         </div>
         <div>
           <p>Tender Amount</p>
           <input
             type='number'
-            name='tender_amount'
+            name='tenderAmount'
             placeholder='Enter tender amount'
             className='border w-full p-2 rounded focus:border-red-500'
-            value={tenderAmount}
-            onChange={(e) => setTenderAmount(e.target.value)}
+            value={formData.tenderAmount}
+            onChange={handleChange}
           />
         </div>
         <div>
           <p>Expiry Date</p>
           <input
             type='date'
-            name='expiry_date'
+            name='expiryDate'
             className='border w-full p-2 rounded focus:border-red-500'
-            value={expiryDate}
-            onChange={(e) => setExpiryDate(e.target.value)}
+            value={formData.expiryDate}
+            onChange={handleChange}
           />
         </div>
         <div className='col-span-1 md:col-span-2'>
@@ -179,4 +195,4 @@ const TenderDetailsPage: React.FC = () => {
   );
 };
 
-export default TenderDetailsPage;
+export default TenderUploads;

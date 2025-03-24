@@ -1,15 +1,16 @@
-
 import { NavLink } from "react-router-dom";
 import {
-  BsFillGearFill,
-  // BsFillGrid3X3GapFill,
-  BsListCheck,
-  BsShieldLockFill,
-  BsMenuButtonWideFill,
-  // BsPeopleFill,
-} from "react-icons/bs";
-import { FiChevronRight, FiChevronLeft, FiHome } from "react-icons/fi";
-// import { IoGameController } from "react-icons/io5";
+  FiChevronRight,
+  FiChevronLeft,
+  FiHome,
+  FiFileText,
+  FiCheckSquare,
+  FiUpload,
+  FiBriefcase,
+  FiDollarSign,
+  FiUsers,
+  FiUser,
+} from "react-icons/fi";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -17,15 +18,14 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { icon: <FiHome size={24} />, label: "Dashboard", path: "/" },
-  // { icon: <IoGameController size={24} />, label: "Games", path: "/games" },
-  // { icon: <BsFillGrid3X3GapFill size={24} />, label: "Categories", path: "/categories" },
-  // { icon: <BsPeopleFill size={24} />, label: "Players", path: "/players" },
-  // { icon: <BsShieldLockFill size={24} />, label: "Documents", path: "/validate-documents" },
-  { icon: <BsListCheck size={24} />, label: "Tender Details", path: "/tender-details" },
-  // { icon: <BsMenuButtonWideFill size={24} />, label: "Reports", path: "/reports" },
-  { icon: <BsFillGearFill size={24} />, label: "Settings", path: "/settings" },
-  
+  { icon: <FiHome size={24} />, label: "Dashboard", path: "/dashboard" },
+  { icon: <FiUpload size={24} />, label: "Upload Tenders", path: "/uploads" },
+  { icon: <FiFileText size={24} />, label: "Documents", path: "/documents" },
+  { icon: <FiCheckSquare size={24} />, label: "Verify Documents", path: "/verify" },
+  { icon: <FiBriefcase size={24} />, label: "Institutions", path: "/institutions" },
+  { icon: <FiDollarSign size={24} />, label: "Transactions", path: "/transactions" },
+  { icon: <FiUsers size={24} />, label: "User Groups", path: "/user-groups" },
+  { icon: <FiUser size={24} />, label: "Users", path: "/users" },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
@@ -39,8 +39,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
       <button
         className="text-white mb-6 p-2 bg-gray-700 rounded-md flex items-center justify-between cursor-pointer"
         onClick={() => setIsCollapsed(!isCollapsed)}
-      > 
-        {!isCollapsed && <span className="text-blue-500 font-bold text-lg">Bonanza</span>}
+      >
+        {!isCollapsed && <span className="text-blue-500 font-bold text-lg">Bid Portal</span>}
         {isCollapsed ? <FiChevronRight size={24} /> : <FiChevronLeft size={24} />}
       </button>
 

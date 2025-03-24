@@ -66,7 +66,7 @@ const Games = () => {
       )}
       {/* <GamesModal isOpen={isModalOpen}  onClose={handleCloseModal} refreshGames={fetchGames} /> */}
 
-      <GamesModal isOpen={isModalOpen} onClose={handleCloseModal} game={selectedGame}  refreshGames={fetchGames} />
+      {/* <GamesModal isOpen={isModalOpen} onClose={handleCloseModal} game={selectedGame}  refreshGames={fetchGames} /> */}
     </div>
   );
 }
