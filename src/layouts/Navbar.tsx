@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import {  RootState } from "../redux/store";
+import { getUserProfile, logout } from '../redux/authSlice';
+import { store } from '../redux/store';
 
 interface NavbarProps {
   isCollapsed: boolean;
@@ -7,12 +11,17 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ isCollapsed }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<typeof store.dispatch>();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('isAuthenticated');
-    navigate('/login');
+    dispatch(logout());
+    navigate("/login"); // Redirect to login page
   };
+  const authState = useSelector((state: RootState) => state.auth);
+  useEffect(()=>{
+dispatch(getUserProfile())
+  },[dispatch])
+// console.log("authState is",authState)
 
   return (
     <div
@@ -20,7 +29,11 @@ const Navbar: React.FC<NavbarProps> = ({ isCollapsed }) => {
         isCollapsed ? "left-20 w-[calc(100%-80px)]" : "left-60 w-[calc(100%-240px)]"
       }`}
     >
-      <h1 className="text-lg font-bold">Welcome !</h1>
+      <div>
+      <h1 className="text-lg font-bold">{authState.user?.name ?? 'Guest'}</h1>
+      <p className='text-sm'>{authState.user?.role ?? ""}</p>
+
+      </div>
       <button
         className="px-5 py-2 bg-blue-500 rounded-full cursor-pointer"
         onClick={handleLogout}

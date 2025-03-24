@@ -18,7 +18,7 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { icon: <FiHome size={24} />, label: "Dashboard", path: "/dashboard" },
+  { icon: <FiHome size={24} />, label: "Dashboard", path: "/" },
   { icon: <FiUpload size={24} />, label: "Upload Tenders", path: "/uploads" },
   { icon: <FiFileText size={24} />, label: "Documents", path: "/documents" },
   { icon: <FiCheckSquare size={24} />, label: "Verify Documents", path: "/verify" },

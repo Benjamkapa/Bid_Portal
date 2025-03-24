@@ -7,17 +7,20 @@ import Logon from "../pages/Auth/Logon";
 import ForgotPassword from "../pages/Auth/ForgotPassword";
 import VerifyDocuments from "../pages/modules/Verify";
 import TenderUploads from "../pages/modules/TenderUploads";
-import PrivateRoute from "../components/PrivateRoute";
 import Documents from "../pages/modules/Documents";
 import Institution from "../pages/modules/Institution";
 import Transaction from "../pages/modules/Transaction";
 import UserGroups from "../pages/modules/UserGroups";
 import Users from "../pages/modules/Users";
+import PrivateRoute from "./PrivateRoute";
+
 
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />,
+
+    element: <Login/>
+
   },
   {
     path: "/logon",
@@ -29,75 +32,73 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: (
-      // <PrivateRoute>
-        <Home />
-      // </PrivateRoute>
-    ),
+
+
+    element: <PrivateRoute><Home /></PrivateRoute>,
     errorElement: <div>Error, Page not found</div>,
     children: [
       {
-        path: "/dashboard",
+        path: "/",
         element: (
-          // <PrivateRoute>
+          
             <AdminDashboard />
-          //  </PrivateRoute>
+          
         ),
       },
       {
         path: "/uploads",
         element: (
-          // <PrivateRoute>
+          
             <TenderUploads />
-          // </PrivateRoute>
+          
         ),
       },
       {
         path: "/documents",
         element: (
-        //  <PrivateRoute>
+       
             <Documents />
-        //  </PrivateRoute>
+        
         ),
       },
       {
         path: "/verify",
         element: (
-          // <PrivateRoute>
+          
             <VerifyDocuments />
-          // </PrivateRoute>
+          
         ),
       },
       {
         path: "/institutions",
         element: (
-          // <PrivateRoute>
+          
             <Institution />
-          // </PrivateRoute>
+          
         ),
       },
       {
         path: "/transactions",
         element: (
-          // <PrivateRoute>
+          
             <Transaction />
-          // </PrivateRoute>
+          
         ),
       },
       {
         path: "/user-groups",
         element: (
-          // <PrivateRoute>
+          
             <UserGroups />
-          // </PrivateRoute>
+          
         ),
       },
       {
         path: "/users",
         element: (
-          // <PrivateRoute>
+          
             <Users />
-          // </PrivateRoute>
+          
         ),
       },
     ],
