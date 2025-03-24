@@ -7,12 +7,13 @@ type User = {
   id: number;
   name: string;
   email: string;
-  role: string;
+  phone?: string;
+  password?: string;
 };
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [newUser, setNewUser] = useState({ name: '', email: '', role: '' });
+  const [newUser, setNewUser] = useState({ name: '', email: '', phone: '', password: '' });
   const [showInputFields, setShowInputFields] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editUser, setEditUser] = useState<User | null>(null);
@@ -32,11 +33,16 @@ const Users: React.FC = () => {
   }, []);
 
   const handleAddUser = async () => {
-    if (newUser.name && newUser.email && newUser.role) {
+    if (newUser.name && newUser.email && newUser.phone && newUser.password) {
       try {
-        const response = await axios.post('https://api.example.com/users', newUser); // Replace with your endpoint URL
-        setUsers([...users, response.data]);
-        setNewUser({ name: '', email: '', role: '' });
+        const response = await axios.post('http://197.248.122.31:3000/api/add-user', {
+          name: newUser.name,
+          email: newUser.email,
+          phone: newUser.phone,
+          password: newUser.password
+        }); // Replace with your endpoint URL
+        setUsers([...users, { ...newUser, id: response.data.userId }]);
+        setNewUser({ name: '', email: '', phone: '', password: '' });
         setShowInputFields(false);
         toast.success('User added successfully');
       } catch (error) {
@@ -61,7 +67,7 @@ const Users: React.FC = () => {
 
   const handleEditUser = (user: User) => {
     setEditUser(user);
-    setNewUser({ name: user.name, email: user.email, role: user.role });
+    setNewUser({ name: user.name, email: user.email, phone: user.phone || '', password: '' });
     setShowInputFields(true);
   };
 
@@ -75,7 +81,7 @@ const Users: React.FC = () => {
           )
         );
         setEditUser(null);
-        setNewUser({ name: '', email: '', role: '' });
+        setNewUser({ name: '', email: '', phone: '', password: '' });
         setShowInputFields(false);
         toast.success('User updated successfully');
       } catch (error) {
@@ -104,7 +110,7 @@ const Users: React.FC = () => {
   );
 
   return (
-    <div className=''>
+    <div>
       <h1 className='text-2xl font-bold mb-5 text-center'>Users</h1>
       <div className='flex items-center justify-end pb-2'>
         <FiSearch className='mr-2' />
@@ -116,7 +122,42 @@ const Users: React.FC = () => {
           className='border p-2 rounded w-64'
         />
       </div>
-      <div className='mb-5' ref={inputRef}>
+      <table className='min-w-full bg-white'>
+        <thead>
+          <tr className='bg-gray-400'>
+            <th className='py-2 px-4 border-b'>Name</th>
+            <th className='py-2 px-4 border-b'>Email</th>
+            <th className='py-2 px-4 border-b'>Phone</th>
+            <th className='py-2 px-4 border-b'>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredUsers.map((user) => (
+            <tr key={user.id} className='text-center'>
+              <td className='py-2 px-4 border-b'>{user.name}</td>
+              <td className='py-2 px-4 border-b'>{user.email}</td>
+              <td className='py-2 px-4 border-b'>{user.phone}</td>
+              <td className='py-2 px-4 border-b'>
+                <div className='flex justify-center space-x-2'>
+                  <button
+                    onClick={() => handleEditUser(user)}
+                    className='text-blue-500 hover:text-blue-700'
+                  >
+                    <FiEdit size={20} title='Edit' />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteUser(user.id)}
+                    className='text-red-500 hover:text-red-700'
+                  >
+                    <FiTrash size={20} title='Delete' />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className='my-3' ref={inputRef}>
         {showInputFields ? (
           <>
             <input
@@ -124,21 +165,28 @@ const Users: React.FC = () => {
               placeholder='User Name'
               value={newUser.name}
               onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-              className='border p-2 rounded mr-2'
+              className='border p-2 rounded m-1'
             />
             <input
               type='email'
               placeholder='Email'
               value={newUser.email}
               onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-              className='border p-2 rounded mr-2'
+              className='border p-2 rounded m-1'
             />
             <input
               type='text'
-              placeholder='Role'
-              value={newUser.role}
-              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-              className='border p-2 rounded mr-2'
+              placeholder='Phone'
+              value={newUser.phone}
+              onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+              className='border p-2 rounded m-1'
+            />
+            <input
+              type='password'
+              placeholder='Password'
+              value={newUser.password}
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+              className='border p-2 rounded m-1'
             />
             {editUser ? (
               <button
@@ -165,41 +213,6 @@ const Users: React.FC = () => {
           </button>
         )}
       </div>
-      <table className='min-w-full bg-white'>
-        <thead>
-          <tr className='bg-gray-400'>
-            <th className='py-2 px-4 border-b'>Name</th>
-            <th className='py-2 px-4 border-b'>Email</th>
-            <th className='py-2 px-4 border-b'>Role</th>
-            <th className='py-2 px-4 border-b'>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map((user) => (
-            <tr key={user.id} className='text-center'>
-              <td className='py-2 px-4 border-b'>{user.name}</td>
-              <td className='py-2 px-4 border-b'>{user.email}</td>
-              <td className='py-2 px-4 border-b'>{user.role}</td>
-              <td className='py-2 px-4 border-b'>
-                <div className='flex justify-center space-x-2'>
-                  <button
-                    onClick={() => handleEditUser(user)}
-                    className='text-blue-500 hover:text-blue-700'
-                  >
-                    <FiEdit size={20} title='Edit' />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteUser(user.id)}
-                    className='text-red-500 hover:text-red-700'
-                  >
-                    <FiTrash size={20} title='Delete' />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };

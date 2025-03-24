@@ -34,11 +34,13 @@ const TenderUploads: React.FC = () => {
       file: selectedFile,
     });
   };
-//   console.log(formData)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem('authToken');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user.id;
+
     try {
       setLoading(true);
       const data = new FormData();
@@ -50,6 +52,7 @@ const TenderUploads: React.FC = () => {
       data.append('applicant', formData.applicant);
       data.append('tender_amount', formData.tenderAmount);
       data.append('expiry_date', formData.expiryDate);
+      data.append('user_id', userId);
       if (formData.file) {
         data.append('document', formData.file);
       }
@@ -87,7 +90,7 @@ const TenderUploads: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screenp-5'>
+    <div className='min-h-screen p-5'>
       <div className='flex justify-between items-center mb-5'>
         <h1 className='text-2xl font-bold mx-auto text-center'>Upload Tender Document</h1>
       </div>
@@ -183,7 +186,7 @@ const TenderUploads: React.FC = () => {
           <input
             type='file'
             name='document'
-            className='border w-full p-2 rounded focus:border-red-500'
+            className='border w-full p-2 rounded'
             onChange={handleFileChange}
           />
         </div>

@@ -115,7 +115,40 @@ const UserGroups: React.FC = () => {
           className='border p-2 rounded w-64'
         />
       </div>
-      <div className='mb-5' ref={inputRef}>
+      <table className='min-w-full bg-white'>
+        <thead>
+          <tr className='bg-gray-400'>
+            <th className='py-2 px-4 border-b'>Name</th>
+            <th className='py-2 px-4 border-b'>Description</th>
+            <th className='py-2 px-4 border-b'>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredUserGroups.map((userGroup) => (
+            <tr key={userGroup.id} className='text-center'>
+              <td className='py-2 px-4 border-b'>{userGroup.name}</td>
+              <td className='py-2 px-4 border-b'>{userGroup.description}</td>
+              <td className='py-2 px-4 border-b'>
+                <div className='flex justify-center space-x-2'>
+                  <button
+                    onClick={() => handleEditUserGroup(userGroup)}
+                    className='text-blue-500 hover:text-blue-700'
+                  >
+                    <FiEdit size={20} title='Edit' />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteUserGroup(userGroup.id)}
+                    className='text-red-500 hover:text-red-700'
+                  >
+                    <FiTrash size={20} title='Delete' />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className='my-3' ref={inputRef}>
         {showInputFields ? (
           <>
             <input
@@ -157,39 +190,6 @@ const UserGroups: React.FC = () => {
           </button>
         )}
       </div>
-      <table className='min-w-full bg-white'>
-        <thead>
-          <tr className='bg-gray-400'>
-            <th className='py-2 px-4 border-b'>Name</th>
-            <th className='py-2 px-4 border-b'>Description</th>
-            <th className='py-2 px-4 border-b'>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUserGroups.map((userGroup) => (
-            <tr key={userGroup.id} className='text-center'>
-              <td className='py-2 px-4 border-b'>{userGroup.name}</td>
-              <td className='py-2 px-4 border-b'>{userGroup.description}</td>
-              <td className='py-2 px-4 border-b'>
-                <div className='flex justify-center space-x-2'>
-                  <button
-                    onClick={() => handleEditUserGroup(userGroup)}
-                    className='text-blue-500 hover:text-blue-700'
-                  >
-                    <FiEdit size={20} title='Edit' />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteUserGroup(userGroup.id)}
-                    className='text-red-500 hover:text-red-700'
-                  >
-                    <FiTrash size={20} title='Delete' />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };
