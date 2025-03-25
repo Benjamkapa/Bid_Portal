@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FiPlus, FiTrash, FiEdit, FiSearch } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import axios from 'axios';
@@ -7,13 +7,13 @@ type User = {
   id: number;
   name: string;
   email: string;
+  phone: string; // Changed to string to handle phone numbers with special characters like '+'
   role?: string;
-  password?: string;
 };
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [newUser, setNewUser] = useState({ name: '', email: '', role: '', password: '' });
+  const [newUser, setNewUser] = useState({ name: '', email: '', phone: '', role: '' });
   const [showInputFields, setShowInputFields] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editUser, setEditUser] = useState<User | null>(null);
@@ -38,21 +38,25 @@ const Users: React.FC = () => {
   }, []);
 
   const handleAddUser = async () => {
-    const token = localStorage.getItem('authToken');
-    if (newUser.name && newUser.email && newUser.role && newUser.password) {
+    const token = localStorage.getItem('token');
+    if (newUser.name && newUser.email && newUser.role && newUser.phone) {
       try {
-        const response = await axios.post('http://197.248.122.31:3000/api/add-user', {
-          name: newUser.name,
-          email: newUser.email,
-          role: newUser.role,
-          password: newUser.password,
-        }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await axios.post(
+          'http://197.248.122.31:3000/api/add-user',
+          {
+            name: newUser.name,
+            email: newUser.email,
+            phone: newUser.phone,
+            role: newUser.role,
           },
-        });
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setUsers([...users, { ...newUser, id: response.data.userId }]);
-        setNewUser({ name: '', email: '', role: '', password: '' });
+        setNewUser({ name: '', email: '', phone: '', role: '' });
         setShowInputFields(false);
         toast.success('User added successfully');
       } catch (error) {
@@ -65,9 +69,9 @@ const Users: React.FC = () => {
   };
 
   const handleDeleteUser = async (id: number) => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://197.248.122.31:3000/api/users/${id}`, {
+      await axios.delete(`http://197.248.122.31:3000/api/delete-user/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -82,26 +86,40 @@ const Users: React.FC = () => {
 
   const handleEditUser = (user: User) => {
     setEditUser(user);
-    setNewUser({ name: user.name, email: user.email, role: user.role || '', password: '' });
+    setNewUser({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role || '',
+    });
     setShowInputFields(true);
   };
 
   const handleSaveEdit = async () => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     if (editUser) {
       try {
-        const response = await axios.put(`http://197.248.122.31:3000/api/users/${editUser.id}`, newUser, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.put(
+          `http://197.248.122.31:3000/api/edit-user/${editUser.id}`,
+          newUser,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Merge the updated fields with the existing user data
         setUsers(
           users.map((user) =>
-            user.id === editUser.id ? response.data : user
+            user.id === editUser.id
+              ? { ...user, ...newUser } // Merge existing user data with updated fields
+              : user
           )
         );
+
         setEditUser(null);
-        setNewUser({ name: '', email: '', role: '', password: '' });
+        setNewUser({ name: '', email: '', phone: '', role: '' });
         setShowInputFields(false);
         toast.success('User updated successfully');
       } catch (error) {
@@ -111,51 +129,51 @@ const Users: React.FC = () => {
     }
   };
 
-  const handleClickAway = (event: MouseEvent) => {
-    if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
-      setShowInputFields(false);
-      setEditUser(null);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickAway);
-    return () => {
-      document.removeEventListener('mousedown', handleClickAway);
-    };
-  }, []);
-
   const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    user.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div>
       <h1 className='text-2xl font-bold mb-5 text-center'>Users</h1>
-      <div className='flex items-center justify-end pb-2'>
-        <FiSearch className='mr-2' />
-        <input
-          type='text'
-          placeholder='Search by User Name'
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className='border p-2 rounded w-64'
-        />
+      <div className='flex items-center justify-between pb-4'>
+        <button
+          onClick={() => {
+            setShowInputFields(true);
+            setNewUser({ name: '', email: '', phone: '', role: '' });
+            setEditUser(null);
+          }}
+          className='bg-blue-500 text-white px-4 py-2 rounded flex items-center'
+        >
+          <FiPlus className='mr-2' /> Add User
+        </button>
+        <div className='flex items-center'>
+          <FiSearch className='mr-2' />
+          <input
+            type='text'
+            placeholder='Search by User Name'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className='border p-2 rounded w-64'
+          />
+        </div>
       </div>
-      <table className='min-w-full bg-white'>
+      <table className='min-w-full bg-white text-left'>
         <thead>
           <tr className='bg-gray-400'>
             <th className='py-2 px-4 border-b'>Name</th>
             <th className='py-2 px-4 border-b'>Email</th>
+            <th className='py-2 px-4 border-b'>Phone</th>
             <th className='py-2 px-4 border-b'>Role</th>
             <th className='py-2 px-4 border-b'>Action</th>
           </tr>
         </thead>
         <tbody>
           {filteredUsers.map((user) => (
-            <tr key={user.id} className='text-center'>
+            <tr key={user.id}>
               <td className='py-2 px-4 border-b'>{user.name}</td>
               <td className='py-2 px-4 border-b'>{user.email}</td>
+              <td className='py-2 px-4 border-b'>{user.phone}</td>
               <td className='py-2 px-4 border-b'>{user.role}</td>
               <td className='py-2 px-4 border-b'>
                 <div className='flex justify-center space-x-2'>
@@ -195,19 +213,23 @@ const Users: React.FC = () => {
               className='border p-2 rounded m-1'
             />
             <input
-              type='text'
-              placeholder=''
+              type='text' // Changed from 'number' to 'text' to handle phone numbers with special characters
+              placeholder='Phone Number'
+              value={newUser.phone}
+              onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+              className='border p-2 rounded m-1'
+            />
+            <select
               value={newUser.role}
               onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
               className='border p-2 rounded m-1'
-            />
-            <input
-              type='password'
-              placeholder='Password'
-              value={newUser.password}
-              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-              className='border p-2 rounded m-1'
-            />
+            >
+              <option value='' disabled>
+                Select Role
+              </option>
+              <option value='admin'>Admin</option>
+              <option value='user'>User</option>
+            </select>
             {editUser ? (
               <button
                 onClick={handleSaveEdit}
@@ -224,14 +246,7 @@ const Users: React.FC = () => {
               </button>
             )}
           </>
-        ) : (
-          <button
-            onClick={() => setShowInputFields(true)}
-            className='bg-blue-500 text-white p-2 rounded flex items-center'
-          >
-            <FiPlus className='mr-2' /> Add User
-          </button>
-        )}
+        ) : null}
       </div>
     </div>
   );
