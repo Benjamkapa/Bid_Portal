@@ -52,7 +52,7 @@ const Documents: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://197.248.122.31:3000/api/tender/${id}`); // Replace with your endpoint URL
+      await axios.delete(`http://197.248.122.31:3000/api/tender/delete-tender/5${id}`); // Replace with your endpoint URL
       setDocuments((prevDocuments) => prevDocuments.filter((doc) => doc.id !== id));
       toast.success('Document deleted successfully');
     } catch (error) {

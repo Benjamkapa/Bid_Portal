@@ -31,7 +31,7 @@ dispatch(getUserProfile())
     >
       <div>
       <h1 className="text-lg font-bold">{authState.user?.name ?? 'Guest'}</h1>
-      <p className='text-sm'>{authState.user?.role ?? ""}</p>
+      <p className='text-sm'>{authState.user?.institution_name ?? ""}</p>
 
       </div>
       <button

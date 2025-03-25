@@ -7,13 +7,13 @@ type User = {
   id: number;
   name: string;
   email: string;
-  phone?: string;
+  role?: string;
   password?: string;
 };
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [newUser, setNewUser] = useState({ name: '', email: '', phone: '', password: '' });
+  const [newUser, setNewUser] = useState({ name: '', email: '', role: '', password: '' });
   const [showInputFields, setShowInputFields] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editUser, setEditUser] = useState<User | null>(null);
@@ -21,8 +21,13 @@ const Users: React.FC = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
+      const token = localStorage.getItem('token');
       try {
-        const response = await axios.get('https://api.example.com/users'); // Replace with your endpoint URL
+        const response = await axios.get('http://197.248.122.31:3000/api/all-users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -33,16 +38,21 @@ const Users: React.FC = () => {
   }, []);
 
   const handleAddUser = async () => {
-    if (newUser.name && newUser.email && newUser.phone && newUser.password) {
+    const token = localStorage.getItem('authToken');
+    if (newUser.name && newUser.email && newUser.role && newUser.password) {
       try {
         const response = await axios.post('http://197.248.122.31:3000/api/add-user', {
           name: newUser.name,
           email: newUser.email,
-          phone: newUser.phone,
-          password: newUser.password
-        }); // Replace with your endpoint URL
+          role: newUser.role,
+          password: newUser.password,
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setUsers([...users, { ...newUser, id: response.data.userId }]);
-        setNewUser({ name: '', email: '', phone: '', password: '' });
+        setNewUser({ name: '', email: '', role: '', password: '' });
         setShowInputFields(false);
         toast.success('User added successfully');
       } catch (error) {
@@ -55,8 +65,13 @@ const Users: React.FC = () => {
   };
 
   const handleDeleteUser = async (id: number) => {
+    const token = localStorage.getItem('authToken');
     try {
-      await axios.delete(`https://api.example.com/users/${id}`); // Replace with your endpoint URL
+      await axios.delete(`http://197.248.122.31:3000/api/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setUsers(users.filter((user) => user.id !== id));
       toast.success('User deleted successfully');
     } catch (error) {
@@ -67,21 +82,26 @@ const Users: React.FC = () => {
 
   const handleEditUser = (user: User) => {
     setEditUser(user);
-    setNewUser({ name: user.name, email: user.email, phone: user.phone || '', password: '' });
+    setNewUser({ name: user.name, email: user.email, role: user.role || '', password: '' });
     setShowInputFields(true);
   };
 
   const handleSaveEdit = async () => {
+    const token = localStorage.getItem('authToken');
     if (editUser) {
       try {
-        const response = await axios.put(`https://api.example.com/users/${editUser.id}`, newUser); // Replace with your endpoint URL
+        const response = await axios.put(`http://197.248.122.31:3000/api/users/${editUser.id}`, newUser, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setUsers(
           users.map((user) =>
             user.id === editUser.id ? response.data : user
           )
         );
         setEditUser(null);
-        setNewUser({ name: '', email: '', phone: '', password: '' });
+        setNewUser({ name: '', email: '', role: '', password: '' });
         setShowInputFields(false);
         toast.success('User updated successfully');
       } catch (error) {
@@ -127,7 +147,7 @@ const Users: React.FC = () => {
           <tr className='bg-gray-400'>
             <th className='py-2 px-4 border-b'>Name</th>
             <th className='py-2 px-4 border-b'>Email</th>
-            <th className='py-2 px-4 border-b'>Phone</th>
+            <th className='py-2 px-4 border-b'>Role</th>
             <th className='py-2 px-4 border-b'>Action</th>
           </tr>
         </thead>
@@ -136,7 +156,7 @@ const Users: React.FC = () => {
             <tr key={user.id} className='text-center'>
               <td className='py-2 px-4 border-b'>{user.name}</td>
               <td className='py-2 px-4 border-b'>{user.email}</td>
-              <td className='py-2 px-4 border-b'>{user.phone}</td>
+              <td className='py-2 px-4 border-b'>{user.role}</td>
               <td className='py-2 px-4 border-b'>
                 <div className='flex justify-center space-x-2'>
                   <button
@@ -176,9 +196,9 @@ const Users: React.FC = () => {
             />
             <input
               type='text'
-              placeholder='Phone'
-              value={newUser.phone}
-              onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+              placeholder=''
+              value={newUser.role}
+              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
               className='border p-2 rounded m-1'
             />
             <input

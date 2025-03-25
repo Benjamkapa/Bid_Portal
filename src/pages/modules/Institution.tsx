@@ -19,8 +19,13 @@ const Institution: React.FC = () => {
 
   useEffect(() => {
     const fetchInstitutions = async () => {
+      const token = 'YOUR_TOKEN_HERE'; // Replace with your actual token
       try {
-        const response = await axios.get('https://api.example.com/institutions'); // Replace with your endpoint URL
+        const response = await axios.get('http://197.248.122.31:3000/api/all-institutions', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setInstitutions(response.data);
       } catch (error) {
         console.error('Error fetching institutions:', error);
@@ -31,9 +36,14 @@ const Institution: React.FC = () => {
   }, []);
 
   const handleAddInstitution = async () => {
+    const token = 'YOUR_TOKEN_HERE'; // Replace with your actual token
     if (newInstitution.name && newInstitution.type) {
       try {
-        const response = await axios.post('https://api.example.com/institutions', newInstitution); // Replace with your endpoint URL
+        const response = await axios.post('http://197.248.122.31:3000/api/all-institutions', newInstitution, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setInstitutions([...institutions, response.data]);
         setNewInstitution({ name: '', type: '' });
         setShowInputFields(false);
@@ -48,8 +58,13 @@ const Institution: React.FC = () => {
   };
 
   const handleDeleteInstitution = async (id: number) => {
+    const token = 'YOUR_TOKEN_HERE'; // Replace with your actual token
     try {
-      await axios.delete(`https://api.example.com/institutions/${id}`); // Replace with your endpoint URL
+      await axios.delete(`http://197.248.122.31:3000/api/all-institutions/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setInstitutions(institutions.filter((institution) => institution.id !== id));
       toast.success('Institution deleted successfully');
     } catch (error) {
@@ -65,9 +80,14 @@ const Institution: React.FC = () => {
   };
 
   const handleSaveEdit = async () => {
+    const token = 'YOUR_TOKEN_HERE'; // Replace with your actual token
     if (editInstitution) {
       try {
-        const response = await axios.put(`https://api.example.com/institutions/${editInstitution.id}`, newInstitution); // Replace with your endpoint URL
+        const response = await axios.put(`http://197.248.122.31:3000/api/all-institutions/${editInstitution.id}`, newInstitution, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setInstitutions(
           institutions.map((institution) =>
             institution.id === editInstitution.id ? response.data : institution
