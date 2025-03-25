@@ -26,7 +26,7 @@ const authState = useSelector((state: RootState) => state.auth);
     }
   }, [dispatch, authState?.isAuthenticated]); 
 
-  console.log("authState is", authState?.isAuthenticated);
+  // console.log("authState is", authState?.isAuthenticated);
 
   // Redirect based on authentication state
   useEffect(() => {
@@ -59,7 +59,10 @@ const authState = useSelector((state: RootState) => state.auth);
 <img src={loginBg} className='w-full h-full' alt="" />
         </div>
         <div className=' w-3/4 mx-auto'>
-          <img src={gameLogo} alt="game-logo" className='object-cover'/>
+        <div>
+          <img src={gameLogo} alt="game-logo" className='h-full w-full object-cover'/>
+
+        </div>
           {/* <p>Login into you account</p> */}
           <form action="" className='space-y-8'>
 
@@ -73,7 +76,7 @@ const authState = useSelector((state: RootState) => state.auth);
   <input type="password" name="password" onChange={handleChange}  className='p-2 border w-full rounded' placeholder='Enter password'/>
 </div>
 <div>
-  <Button text="Login" color='bg-[#356aef]' onClick={handleLogin}/>
+  <Button text="Login" color='bg-[#356aef]' isLoading={authState?.loading} onClick={handleLogin}/>
 <div className='flex justify-end mt-2'>
            <Link to="/forgot-password" className='text-blue-500'>Forgot Password?</Link>
       </div>

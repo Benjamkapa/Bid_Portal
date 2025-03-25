@@ -7,7 +7,7 @@ import Logon from "../pages/Auth/Logon";
 import ForgotPassword from "../pages/Auth/ForgotPassword";
 import VerifyDocuments from "../pages/modules/Verify";
 import TenderUploads from "../pages/modules/TenderUploads";
-import Documents from "../pages/modules/Documents";
+import Tenders from "../pages/modules/Tenders";
 import Institution from "../pages/modules/Institution";
 import Transaction from "../pages/modules/Transaction";
 import UserGroups from "../pages/modules/UserGroups";
@@ -54,10 +54,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/documents",
+        path: "/tenders",
         element: (
        
-            <Documents />
+            <Tenders />
         
         ),
       },

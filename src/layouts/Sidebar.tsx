@@ -25,7 +25,7 @@ interface SidebarProps {
 const menuItems = [
   { icon: <FiHome size={24} />, label: "Dashboard", path: "/" },
   { icon: <FiUpload size={24} />, label: "Upload Tenders", path: "/uploads" },
-  { icon: <FiFileText size={24} />, label: "Documents", path: "/documents" },
+  { icon: <FiFileText size={24} />, label: "Tenders", path: "/tenders" },
   { icon: <FiCheckSquare size={24} />, label: "Verify Documents", path: "/verify" },
   { icon: <FiBriefcase size={24} />, label: "Institutions", path: "/institutions" },
   { icon: <FiDollarSign size={24} />, label: "Transactions", path: "/transactions" },
@@ -34,9 +34,9 @@ const menuItems = [
 ];
 
 const roleBasedMenu: Record<string, string[]> = {
-  super_admin: ["/", "/uploads", "/documents", "/verify", "/institutions", "/transactions", "/user-groups", "/users"],
-  admin: ["/", "/uploads", "/documents", "/verify", "/institutions"],
-  user: ["/", "/documents", "/transactions",],
+  super_admin: ["/",  "/uploads","/tenders", "/institutions", "/transactions", "/user-groups", "/users"],
+  admin: ["/",  "/tenders", "/transactions","/users"],
+  user: ["/", "/tenders","/uploads", "/transactions","/users"],
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
