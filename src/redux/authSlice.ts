@@ -13,7 +13,10 @@ interface User {
   name: string;
   email: string;
   role:string;
-  institution_name:string
+  instituion:{
+    institution_id:number;
+      institution_name:string;
+  }
 }
 
 interface AuthState {
@@ -76,7 +79,7 @@ export const getUserProfile = createAsyncThunk<User, void, { rejectValue: string
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get<User>(`${API_URL}/profile`, token());
-console.log("Profile res",response)
+// console.log("Profile res",response)
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;

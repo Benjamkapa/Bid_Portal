@@ -15,13 +15,13 @@ const Navbar: React.FC<NavbarProps> = ({ isCollapsed }) => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login"); // Redirect to login page
+    navigate("/login"); 
   };
   const authState = useSelector((state: RootState) => state.auth);
   useEffect(()=>{
 dispatch(getUserProfile())
   },[dispatch])
-// console.log("authState is",authState)
+
 
   return (
     <div
@@ -31,7 +31,7 @@ dispatch(getUserProfile())
     >
       <div>
       <h1 className="text-lg font-bold">{authState.user?.name ?? 'Guest'}</h1>
-      <p className='text-sm'>{authState.user?.institution_name ?? ""}</p>
+      <p className='text-sm'>{authState.user?.instituion?.institution_name ?? ""} ({authState.user?.role})</p>
 
       </div>
       <button
