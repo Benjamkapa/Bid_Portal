@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FiPlus, FiTrash, FiEdit, FiSearch } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 type User = {
   id: number;
@@ -16,26 +18,31 @@ const Users: React.FC = () => {
   const [newUser, setNewUser] = useState({ name: '', email: '', phone: '', role: '' });
   const [showInputFields, setShowInputFields] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
   const [editUser, setEditUser] = useState<User | null>(null);
   const inputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await axios.get('http://197.248.122.31:3000/api/all-users', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUsers(response.data);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        toast.error('Error fetching users');
-      }
-    };
     fetchUsers();
   }, []);
+  
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://197.248.122.31:3000/api/all-users', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast.error('Error fetching users');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddUser = async () => {
     const token = localStorage.getItem('token');
@@ -134,67 +141,79 @@ const Users: React.FC = () => {
   );
 
   return (
-    <div>
-      <h1 className='text-2xl font-bold mb-5 text-center'>Users</h1>
-      <div className='flex items-center justify-between pb-4'>
+      <div>
+      <div className='flex items-center justify-between py-6'>
+      <h1 className='text-2xl font-bold mb-5'>Users</h1>
+        <div className='flex items-center justify-center w-full'>
+          {/* <FiSearch className='mr-2' /> */}
+          <input
+            type='text'
+            placeholder='Search by User Name'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className='border p-2 items-center rounded w-64'
+          />
+        </div>
+      </div>
+      <div className='py-2'>
         <button
           onClick={() => {
             setShowInputFields(true);
             setNewUser({ name: '', email: '', phone: '', role: '' });
             setEditUser(null);
           }}
-          className='bg-blue-500 text-white px-4 py-2 rounded flex items-center'
+          className='bg-blue-500 text-black rounded-full px-2 py-1 cursor-pointer flex items-center'
         >
-          <FiPlus className='mr-2' /> Add User
+          <FiPlus className='mr-1' /> Add User
         </button>
-        <div className='flex items-center'>
-          <FiSearch className='mr-2' />
-          <input
-            type='text'
-            placeholder='Search by User Name'
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className='border p-2 rounded w-64'
-          />
         </div>
-      </div>
-      <table className='min-w-full bg-white text-left'>
-        <thead>
-          <tr className='bg-gray-400'>
-            <th className='py-2 px-4 border-b'>Name</th>
-            <th className='py-2 px-4 border-b'>Email</th>
-            <th className='py-2 px-4 border-b'>Phone</th>
-            <th className='py-2 px-4 border-b'>Role</th>
-            <th className='py-2 px-4 border-b'>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map((user) => (
-            <tr key={user.id}>
-              <td className='py-2 px-4 border-b'>{user.name}</td>
-              <td className='py-2 px-4 border-b'>{user.email}</td>
-              <td className='py-2 px-4 border-b'>{user.phone}</td>
-              <td className='py-2 px-4 border-b'>{user.role}</td>
-              <td className='py-2 px-4 border-b'>
-                <div className='flex justify-center space-x-2'>
-                  <button
-                    onClick={() => handleEditUser(user)}
-                    className='text-blue-500 hover:text-blue-700'
+
+        { loading ? (
+          <Skeleton height={10} count={20} /> // Skeleton component for loading animation
+        ) : (
+          <table className='min-w-full bg-white text-center'>
+              <thead>
+                <tr className='bg-gray-400'>
+                  <th className='py-2 px-4 border-b'>Name</th>
+                  <th className='py-2 px-4 border-b'>Email</th>
+                  <th className='py-2 px-4 border-b'>Phone</th>
+                  <th className='py-2 px-4 border-b'>Institution Name</th>
+                  <th className='py-2 px-4 border-b'>Role</th>
+                  <th className='py-2 px-4 border-b'>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.map((user, index) => (
+                  <tr key={user.id}
+                  className={`text-center ${index % 2 === 0 ? 'bg-gray-200' : ''}`}
                   >
-                    <FiEdit size={20} title='Edit' />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteUser(user.id)}
-                    className='text-red-500 hover:text-red-700'
-                  >
-                    <FiTrash size={20} title='Delete' />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                    <td className='py-2 px-4'>{user.name}</td>
+                    <td className='py-2 px-4'>{user.email}</td>
+                    <td className='py-2 px-4'>{user.phone}</td>
+                    <td className='py-2 px-4'>{user.institution_name}</td>
+                    <td className='py-2 px-4'>{user.role}</td>
+                    <td className='py-2 px-4'>
+                      <div className='flex justify-center space-x-2'>
+                        <button
+                          onClick={() => handleEditUser(user)}
+                          className='text-blue-500 hover:text-blue-700'
+                        >
+                          <FiEdit size={20} title='Edit' />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user.id)}
+                          className='text-red-500 hover:text-red-700'
+                        >
+                          <FiTrash size={20} title='Delete' />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+        )
+      }
       <div className='my-3' ref={inputRef}>
         {showInputFields ? (
           <>
@@ -233,14 +252,14 @@ const Users: React.FC = () => {
             {editUser ? (
               <button
                 onClick={handleSaveEdit}
-                className='bg-blue-500 text-white p-2 rounded flex items-center'
+                className='bg-blue-500 text-black p-2 rounded flex items-center'
               >
                 Save Changes
               </button>
             ) : (
               <button
                 onClick={handleAddUser}
-                className='bg-blue-500 text-white p-2 rounded flex items-center'
+                className='bg-blue-500 text-black p-2 rounded flex items-center'
               >
                 Save User
               </button>

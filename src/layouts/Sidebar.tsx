@@ -29,7 +29,7 @@ const menuItems = [
   { icon: <FiCheckSquare size={24} />, label: "Verify Documents", path: "/verify" },
   { icon: <FiBriefcase size={24} />, label: "Institutions", path: "/institutions" },
   { icon: <FiDollarSign size={24} />, label: "Transactions", path: "/transactions" },
-  { icon: <FiUsers size={24} />, label: "User Groups", path: "/user-groups" },
+  // { icon: <FiUsers size={24} />, label: "User Groups", path: "/user-groups" },
   { icon: <FiUser size={24} />, label: "Users", path: "/users" },
 ];
 

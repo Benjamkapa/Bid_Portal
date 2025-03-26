@@ -51,8 +51,6 @@ const Documents: React.FC = () => {
 
   let url= authState?.user?.role ==="user" ?   `http://197.248.122.31:3000/api/tender/get-tender-based/${authState?.user?.instituion?.institution_id}`: "http://197.248.122.31:3000/api/tender/all-tenders"
 
-
-  
   useEffect(() => {
     fetchDocuments();
   }, []);
