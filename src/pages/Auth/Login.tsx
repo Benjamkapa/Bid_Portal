@@ -31,7 +31,11 @@ const authState = useSelector((state: RootState) => state.auth);
   // Redirect based on authentication state
   useEffect(() => {
     if (authState?.isAuthenticated) {
-      navigate("/");
+      if(authState?.user?.role=="admin"){
+        navigate("/tenders")
+      }else{
+        navigate("/");
+      }
     }
   }, [authState?.isAuthenticated, navigate]); // Depend on navigate to avoid unnecessary renders
 

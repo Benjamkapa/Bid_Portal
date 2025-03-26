@@ -6,10 +6,13 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import formatCurrency from '../../utils/FormatCurrency';
 import { getUserProfile, token } from '../../redux/authSlice';
-
 import { FaFilePdf } from "react-icons/fa6";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
+import { GoSearch } from "react-icons/go";
+import { FaRegEdit } from "react-icons/fa";
+import { Link } from 'react-router-dom';
+
 
 
 type Document = {
@@ -44,7 +47,7 @@ const Documents: React.FC = () => {
     }
   }, [dispatch, authState?.isAuthenticated]);
   
-  console.log("authStateis",authState.user)
+
 
   let url= authState?.user?.role ==="user" ?   `http://197.248.122.31:3000/api/tender/get-tender-based/${authState?.user?.instituion?.institution_id}`: "http://197.248.122.31:3000/api/tender/all-tenders"
 
@@ -111,20 +114,21 @@ const Documents: React.FC = () => {
     <div>
       <div className="flex justify-between items-center pb-10">
         <h1 className='text-2xl'>Tenders List</h1>
-        <div className='flex items-center'>
+        <div className='relative'>
           <input
             type='text'
-            placeholder='Search by Tender Number'
+            placeholder='Search by tender number'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className='border p-2 rounded w-64'
+            className='border p-2 rounded w-64 '
           />
+          <GoSearch size={23} className='absolute top-2 right-2 '/>
         </div>
         <div className='space-x-3'>
-          {['All', 'Pending', 'Approved'].map((status) => (
+          {['All', 'Pending', 'Approved',"Rejected"].map((status) => (
             <button
               key={status}
-              className={`rounded-full px-4 py-1 ${
+              className={`rounded-full px-4 py-1 cursor-pointer ${
                 statusFilter === status ? 'bg-blue-500 text-white' : 'bg-gray-300'
               }`}
               onClick={() => setStatusFilter(status)}
@@ -138,40 +142,46 @@ const Documents: React.FC = () => {
       {loading ? (
         <Skeleton count={10} height={40} />
       ) : (
-        <table className='min-w-full bg-white'>
+        <table className='min-w-full bg-white text-xs '>
           <thead>
             <tr>
-              <th className='py-2 px-4 border-b'>Beneficiary</th>
-              <th className='py-2 px-4 border-b'>Tender Number</th>
-              <th className='py-2 px-4 border-b'>Date</th>
-              <th className='py-2 px-4 border-b'>Guarantee No</th>
-              <th className='py-2 px-4 border-b'>Guarantor</th>
-              <th className='py-2 px-4 border-b'>Applicant</th>
-              <th className='py-2 px-4 border-b'>Tender Amount</th>
-              <th className='py-2 px-4 border-b'>Expiry Date</th>
-              <th className='py-2 px-4 border-b'>Status</th>
-              <th className='py-2 px-4 border-b'>Action</th>
+              <th className='py-4 px-4 border-b'>Beneficiary</th>
+              <th className='py-4 px-4 border-b'>Tender No</th>
+              <th className='py-4 px-4 border-b'>Date</th>
+              <th className='py-4 px-4 border-b'>Guarantee No</th>
+              <th className='py-4 px-4 border-b'>Guarantor</th>
+              <th className='py-4 px-4 border-b'>Applicant</th>
+              <th className='py-4 px-4 border-b'>Tender Amount</th>
+              <th className='py-4 px-4 border-b'>Expiry</th>
+              <th className='py-4 px-4 border-b'>Status</th>
+              <th className='py-4 px-4 border-b'>Action</th>
             </tr>
           </thead>
           <tbody>
             {filteredDocuments.map((document, index) =>{
 
-              let color;
-              switch (document.status) {
+              let bgColor;
+              let textColor;
+              switch (document?.status) {
                 case "pending":
-                  color="yellow-500"                
+                  bgColor = "bg-yellow-500"
+                  textColor = "text-yellow-500 "     
                   break;
                   case "approved":
-                    color="green-500"
+                    bgColor = "bg-green-500"
+                     textColor = "text-green-500"  
                     break;
                   case "rejected":
-                    color="red-500"
+                    bgColor = "bg-red-500"
+                    textColor = "text-red-500" 
+
                     break
                 default:
                   break;
               }
+            
               return            (
-                <tr key={document.id} className={`text-center ${index % 2 === 0 ? 'bg-gray-200' : ''}`}>
+                <tr key={document.id} className={`text-center  ${index % 2 === 0 ? 'bg-gray-100' : ''}`}>
                   <td className='py-1.5 px-4'>{document.beneficiary}</td>
                   <td className='py-1.5 px-4'>{document.tender_number}</td>
                   <td className='py-1.5 px-4'>{new Date(document.date).toLocaleDateString()}</td>
@@ -181,36 +191,38 @@ const Documents: React.FC = () => {
                   <td className='py-1.5 px-4'>{formatCurrency(Number(document.tender_amount))}</td>
                   <td className='py-1.5 px-4'>{new Date(document.expiry_date).toLocaleDateString()}</td>
                   <td className='py-1 px-4'>
-
                   {
-  authState?.user?.role ==="user" ? <span className={`text-${color}`}>{document.status}</span> :                       <select
-  value={document.status}
-  onChange={(e) => handleStatusChange(document, e.target.value)}
-  className={` p-1 rounded bg-${color} text-gray-800 `}
->
-  <option value='pending'>Pending</option>
-  <option value='approved'>Approved</option>
-  <option value='rejected'>Rejected</option>
-</select>
-}
-
+                     authState?.user?.role ==="user" ? <span className={`${textColor}`}>{document.status}</span> :
+                    <select
+                      value={document.status}
+                      onChange={(e) => handleStatusChange(document, e.target.value)}
+                      className={`p-1 rounded  text-gray-800 ${bgColor}`}
+                     >
+                      <option value='pending'>Pending</option>
+                      <option value='approved'>Approved</option>
+                      <option value='rejected'>Rejected</option>
+                  </select>
+                   }
                     </td>
                   <td className='py-1.5 px-4 space-x-2'>
-                    <div className='flex justify-center space-x-2'>
-                      {/* <a  href={document.document_url} download className='text-blue-500 hover:text-blue-700'>
-                        <FiDownload size={20} />
-                      </a> */}
+                    <div className='flex justify-center items-center space-x-2'>
+                      { authState?.user?.role !=="admin" && 
+                      <Link to={`/uploads/${document.tender_number}`}>
+                      <FaRegEdit  size={15} title='Edit tender'/>                 
+                      </Link>
+                       }
+                       {
+                          authState?.user?.role !=="admin" && <button
+                          onClick={() => handleDelete(document.id)}
+                          className='text-red-500 hover:text-red-700'
+                        >
+                          <FiTrash size={15} title='Delete tender' />
+                        </button>
+                        }
+    
                       <a target='blank' href={document.document_url}>
-
-                 <FaFilePdf size={25}/>
-
+                 <FaFilePdf size={20} className='text-gray-700' title='View  tender'/>
                       </a>
-                      <button
-                        onClick={() => handleDelete(document.id)}
-                        className='text-red-500 hover:text-red-700'
-                      >
-                        <FiTrash size={20} title='Delete' />
-                      </button>
                     </div>
                   </td>
                 </tr>

@@ -1,40 +1,102 @@
-import React from 'react';
-import { FaUsers, FaBuilding, FaFileContract, FaFileAlt } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+
+import { SiVirustotal } from "react-icons/si";
+import { MdOutlinePendingActions } from "react-icons/md";
+import { FcCancel,FcApprove } from "react-icons/fc";
+
+
+import axios from 'axios';
+import { token } from '../../redux/authSlice';
+import toast from 'react-hot-toast';
+
+
+
 
 const AdminDashboard = () => {
+
+
+
+
+interface Stat {
+  total: number;
+}
+
+const [stats, setStats] = useState<Stat[]>([])
+// fetch stats
+const fetStats=async()=>{
+
+try {
+  const response=await axios.get("http://197.248.122.31:3000/api/stats/",token())
+  const data=response.data
+  setStats(data.stats)
+  
+} catch (error) {
+  console.log(error)
+  toast.error("Failed to fetch statistics")
+}
+
+}
+useEffect(()=>{
+fetStats()
+},[])
+
+const sum = stats?.reduce((acc, item) => acc + item.total, 0);
+
+
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">Dashboard</h1>
+    <div className="space-y-5">
+      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* User Management */}
-        <div className="bg-gray-400 shadow-md rounded p-4">
-          <h2 className="text-xl font-semibold mb-2"><FaUsers className="inline-block mr-2" /> User Management</h2>
-          <p>Manage users, add, edit, or delete user accounts.</p>
-          {/* <button className="mt-2 btn btn-primary">Manage Users</button> */}
+      <div className="grid grid-cols-4 bg-white rounded-md space-x-2 ">
+        <div className="border-r border-r-[#ccc] p-4    flex justify-between items-center">
+          <div>
+            <h1>Total Tenders</h1>
+            <p className="font-bold text-xl py-1 ">{sum}</p>
+          </div>
+          <div>
+            <SiVirustotal size={45} className='text-blue-500'/>
+          </div>
         </div>
 
-        {/* Company Management */}
-        <div className="bg-gray-400 shadow-md rounded p-4">
-          <h2 className="text-xl font-semibold mb-2"><FaBuilding className="inline-block mr-2" /> Company Management</h2>
-          <p>Approve, reject, or delete company registrations.</p>
-          {/* <button className="mt-2 btn btn-primary">Manage Companies</button> */}
+        <div className="border-r border-r-[#ccc] p-4  flex justify-between items-center">
+          <div>
+            <h1>Pending Tenders</h1>
+            <p className="font-bold text-xl py-1 ">
+            {stats?.[2]?.total}
+            </p>
+          </div>
+          <div>
+          <MdOutlinePendingActions size={45} className='text-yellow-500'/>
+          </div>
+        </div>
+        <div className=" border-r border-r-[#ccc] p-4   flex justify-between items-center">
+          <div>
+            <h1>Approved Tenders</h1>
+            <p className="font-bold text-xl py-1 ">
+          {stats?.[0]?.total}
+            </p>
+          </div>
+          <div>
+          <FcApprove  size={45} />
+          </div>
+        </div>
+        <div className="border-r border-r-[#ccc] p-4  flex justify-between items-center">
+          <div>
+            <h1>Rejected Tenders</h1>
+            <p className="font-bold text-xl py-1 ">
+            {stats?.[1]?.total}
+            </p>
+          </div>
+          <div>
+          <FcCancel size={45} className='text-red-500'/>
+          </div>
         </div>
 
-        {/* Bid Bond Management */}
-        <div className="bg-gray-400 shadow-md rounded p-4">
-          <h2 className="text-xl font-semibold mb-2"><FaFileContract className="inline-block mr-2" /> Bid Bond Management</h2>
-          <p>Review and validate bid bonds submitted by companies.</p>
-          {/* <button className="mt-2 btn btn-primary">Manage Bid Bonds</button> */}
-        </div>
 
-        {/* Tender Management */}
-        <div className="bg-gray-400 shadow-md rounded p-4">
-          <h2 className="text-xl font-semibold mb-2"><FaFileAlt className="inline-block mr-2" /> Tender Management</h2>
-          <p>Add, edit, or delete tenders.</p>
-          {/* <button className="mt-2 btn btn-primary">Manage Tenders</button> */}
         </div>
-      </div>
+        <div>
+        {/* <h1 className="text-xl ">Recent uploads.</h1> */}
+        </div>
     </div>
   );
 }

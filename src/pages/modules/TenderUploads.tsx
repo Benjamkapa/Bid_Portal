@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Button from '../../components/button/Button';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import { getUserProfile } from '../../redux/authSlice';
+import { useNavigate, useParams } from 'react-router-dom';
+const API_URL = 'http://197.248.122.31:3000/api/tender';
+// const EDIT_URL = 'http://197.248.122.31:3000/api/tender/edit-tender/4';
 
-const API_URL = 'http://197.248.122.31:3000/api/tender/add-tender';
 
 const TenderUploads: React.FC = () => {
+const {tenderNo}=useParams()
+const navigate=useNavigate()
+// console.log("tenderNo is",tenderNo)
+
   const [formData, setFormData] = useState({
     beneficiary: '',
     tenderNumber: '',
@@ -18,6 +27,56 @@ const TenderUploads: React.FC = () => {
     file: null as File | null,
   });
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false)
+  const [tenderId, setTenderId] = useState("")
+
+    // get user profile
+    const dispatch = useDispatch<AppDispatch>();
+    const authState = useSelector((state: RootState) => state.auth);
+  
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (token && !authState?.isAuthenticated) {
+        dispatch(getUserProfile());
+      }
+    }, [dispatch, authState?.isAuthenticated]);
+
+
+    useEffect(() => {
+      if (tenderNo) {
+        fetchTenderDetails(tenderNo);
+      }
+    }, [tenderNo]);
+  
+    const fetchTenderDetails = async (tenderNo: string) => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_URL}/single-tender/${tenderNo}`);
+        
+        const tender = response.data;
+        // console.log("tender is",tender)
+        setFormData({
+          beneficiary: tender.beneficiary || '',
+          tenderNumber: tender.tender_number || '',
+          date: tender.date || '',
+          guaranteeNo: tender.guarantee_no || '',
+          guarantor: tender.guarantor || '',
+          applicant: tender.applicant || '',
+          tenderAmount: tender.tender_amount || '',
+          expiryDate: tender.expiry_date || '',
+          file: null,
+        });
+        setTenderId(tender.id)
+        setIsEditing(true)
+      } catch (error) {
+        toast.error('Failed to load tender details');
+        console.error('Fetch Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    // console.log("Editing",isEditing)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -35,11 +94,10 @@ const TenderUploads: React.FC = () => {
     });
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('authToken');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = user.id;
+    const token = localStorage.getItem('token');
 
     try {
       setLoading(true);
@@ -52,19 +110,27 @@ const TenderUploads: React.FC = () => {
       data.append('applicant', formData.applicant);
       data.append('tender_amount', formData.tenderAmount);
       data.append('expiry_date', formData.expiryDate);
-      data.append('user_id', userId);
+      if (authState?.user?.id) {
+        data.append('user_id', authState.user.id);
+      }
       if (formData.file) {
         data.append('document', formData.file);
       }
 
-      await axios.post(API_URL, data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      if (isEditing) {
+        await axios.put(`${API_URL}/edit-tender/${tenderId}`, data, {
+          headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` },
+        });
+        toast.success('Tender updated successfully');
+      } else {
+        await axios.post(`${API_URL}/add-tender`, data, {
+          headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` },
+        });
+        toast.success('Tender uploaded successfully');
+      }
+      navigate('/tenders');
 
-      toast.success('Tender document uploaded successfully');
+      toast.success('Tender  uploaded successfully');
       // Reset form fields
       setFormData({
         beneficiary: '',
@@ -90,11 +156,11 @@ const TenderUploads: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen p-5'>
+    <div className='min-h-screen'>
       <div className='flex justify-between items-center mb-5'>
-        <h1 className='text-2xl font-bold mx-auto text-center'>Upload Tender Document</h1>
+        <h1 className='text-xl font-bold'>{tenderNo? "Update Tender Details":"Enter Tender Details"}</h1>
       </div>
-      <form onSubmit={handleSubmit} autoComplete='off' className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-400 rounded p-5 w-full max-w-4xl mx-auto'>
+      <form  autoComplete='off' className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-white rounded p-5 w-full max-w-4xl'>
         <div>
           <p>Beneficiary</p>
           <input
@@ -191,7 +257,7 @@ const TenderUploads: React.FC = () => {
           />
         </div>
         <div className='col-span-1 md:col-span-2 flex justify-end'>
-          <Button color='bg-red-500' width='1/2' text='Upload Document' onClick={handleSubmit} isLoading={loading} />
+          <Button color='bg-red-500' width='1/2' text={tenderNo? "Update Tender":"Create tender"}  onClick={handleSubmit} isLoading={loading} />
         </div>
       </form>
     </div>
@@ -199,3 +265,5 @@ const TenderUploads: React.FC = () => {
 };
 
 export default TenderUploads;
+
+

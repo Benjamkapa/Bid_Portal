@@ -47,11 +47,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/uploads",
-        element: (
-          
-            <TenderUploads />
-          
-        ),
+        element: (<TenderUploads />),
+      },
+      {
+        path: "/uploads/:tenderNo",
+        element: (<TenderUploads />),
       },
       {
         path: "/tenders",

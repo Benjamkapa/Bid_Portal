@@ -16,7 +16,7 @@ const Home = () => {
         <Navbar isCollapsed={isCollapsed} />
         {/* Main Content */}
         <div
-          className={`flex-1 p-6 mt-16 transition-all duration-300 bg-gray-100 ${
+          className={`flex-1 p-6 mt-16 transition-all duration-300 bg-gray-200 ${
             isCollapsed ? "ml-20" : "ml-60"
           }`}
         >

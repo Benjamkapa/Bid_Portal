@@ -35,7 +35,7 @@ const menuItems = [
 
 const roleBasedMenu: Record<string, string[]> = {
   super_admin: ["/",  "/uploads","/tenders", "/institutions", "/transactions", "/user-groups", "/users"],
-  admin: ["/",  "/tenders", "/transactions","/users"],
+  admin: ["/tenders", "/transactions","/users"],
   user: ["/", "/tenders","/uploads", "/transactions","/users"],
 };
 
@@ -55,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
   const filteredMenuItems = menuItems.filter((item) => allowedPaths.includes(item.path));
 
   return (
-    <div className={`fixed top-0 left-0 h-screen bg-gray-800 text-white p-4 flex flex-col transition-all duration-300 ${isCollapsed ? "w-20" : "w-60"}`}>
+    <div className={`fixed top-0 left-0 h-screen  bg-gray-800 text-white p-4 flex flex-col transition-all duration-300 ${isCollapsed ? "w-20" : "w-60"}`}>
       {/* Sidebar Toggle Button */}
       <button
         className="text-white mb-6 p-2 bg-gray-700 rounded-md flex items-center justify-between cursor-pointer"

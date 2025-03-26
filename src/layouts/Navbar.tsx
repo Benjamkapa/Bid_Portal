@@ -22,6 +22,27 @@ const Navbar: React.FC<NavbarProps> = ({ isCollapsed }) => {
 dispatch(getUserProfile())
   },[dispatch])
 
+// format user role
+  const formatRole=()=>{
+    let role=""
+    switch (authState.user?.role) {
+      case "super_admin":
+        role="Super Admin"
+        break;
+      case "admin":
+        role= "Admin"
+        break
+      case "user":
+        role="User"  
+        break;
+      default:
+        break;
+    }
+
+    return role
+  }
+
+
 
   return (
     <div
@@ -31,7 +52,7 @@ dispatch(getUserProfile())
     >
       <div>
       <h1 className="text-lg font-bold">{authState.user?.name ?? 'Guest'}</h1>
-      <p className='text-sm'>{authState.user?.instituion?.institution_name ?? ""} ({authState.user?.role})</p>
+      <p className='text-sm'>{authState.user?.instituion?.institution_name ?? ""} ({formatRole()})</p>
 
       </div>
       <button
