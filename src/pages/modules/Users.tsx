@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiPlus, FiTrash, FiEdit, FiSearch } from 'react-icons/fi';
+import { FiPlus, FiTrash, FiEdit} from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { GoSearch } from "react-icons/go";
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -9,7 +10,8 @@ type User = {
   id: number;
   name: string;
   email: string;
-  phone: string; // Changed to string to handle phone numbers with special characters like '+'
+  phone: string; 
+  institution_name:string;
   role?: string;
 };
 
@@ -62,7 +64,7 @@ const Users: React.FC = () => {
             },
           }
         );
-        setUsers([...users, { ...newUser, id: response.data.userId }]);
+        setUsers((prevUsers) => [...prevUsers, response.data]);
         setNewUser({ name: '', email: '', phone: '', role: '' });
         setShowInputFields(false);
         toast.success('User added successfully');
@@ -115,7 +117,7 @@ const Users: React.FC = () => {
             },
           }
         );
-
+        setUsers(users.map((user) => (user.id === editUser.id ? response.data : user))); 
         // Merge the updated fields with the existing user data
         setUsers(
           users.map((user) =>
@@ -145,7 +147,6 @@ const Users: React.FC = () => {
       <div className='flex items-center justify-between py-6'>
       <h1 className='text-2xl font-bold mb-5'>Users</h1>
         <div className='flex items-center justify-center w-full'>
-          {/* <FiSearch className='mr-2' /> */}
           <input
             type='text'
             placeholder='Search by User Name'
@@ -153,6 +154,7 @@ const Users: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className='border p-2 items-center rounded w-64'
           />
+          <GoSearch size={23} className='relative top-.5 right-8 '/>
         </div>
       </div>
       <div className='py-2'>

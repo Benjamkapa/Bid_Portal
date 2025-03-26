@@ -1,19 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { FiTrash, FiEdit, FiPlus } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import formatCurrency from '../../utils/FormatCurrency';
+import { GoSearch } from 'react-icons/go';
 
-// Define the Institution interface
 interface Institution {
   id: number;
   institution_name: string;
   type: string;
   balance: number;
   rates: string;
-  created_at: string; // or Date if you prefer
+  created_at: string; 
 }
 
 const Institutions = () => {
@@ -21,11 +21,11 @@ const Institutions = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [newInstitution, setNewInstitution] = useState<Institution>({ 
-    id: 0, // Temporary ID for new institutions
+    id: 0,
     institution_name: '', 
     type: '', 
     rates: '', 
-    balance: 0, 
+    balance: 0,
     created_at: '' 
   });
   const [editInstitution, setEditInstitution] = useState<Institution | null>(null);
@@ -46,7 +46,7 @@ const Institutions = () => {
       setInstitutions(response.data);
     } catch (error) {
       console.error('Error fetching institutions:', error);
-      toast.error('Error fetching institutions: ' + error.message);
+      toast.error('Error fetching institutions: ');
     } finally {
       setLoading(false);
     }
@@ -62,10 +62,9 @@ const Institutions = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setInstitutions([...institutions, { ...newInstitution, id: response.data.id }]);
-        setNewInstitution({ institution_name: '', type: '', rates: '', balance: 0, created_at: '' });
         setShowInputFields(false);
         toast.success('Institution added successfully');
-        fetchInstitutions(); // Refresh the list after adding
+        fetchInstitutions(); 
       } catch (error) {
         console.error('Error adding institution:', error);
         toast.error('Error adding institution: ');
@@ -77,13 +76,6 @@ const Institutions = () => {
 
   const handleEditInstitution = (institution: Institution) => {
     setEditInstitution(institution);
-    setNewInstitution({ 
-      institution_name: institution.institution_name, 
-      type: institution.type, 
-      rates: institution.rates, 
-      balance: institution.balance, 
-      created_at: institution.created_at 
-    });
     setShowInputFields(true);
   };
 
@@ -106,13 +98,12 @@ const Institutions = () => {
           )
         );
         setEditInstitution(null);
-        setNewInstitution({ institution_name: '', type: '', rates: '', balance: 0, created_at: '' });
         setShowInputFields(false);
         toast.success('Institution updated successfully');
         fetchInstitutions(); // Refresh the list after editing
       } catch (error) {
         console.error('Error updating institution:', error);
-        toast.error('Error updating institution: ' + error.message);
+        toast.error('Error updating institution: ');
       }
     }
   };
@@ -130,7 +121,7 @@ const Institutions = () => {
       fetchInstitutions(); // Refresh the list after deletion
     } catch (error) {
       console.error('Error deleting Institution:', error);
-      toast.error('Error deleting Institution: ' + error.message);
+      toast.error('Error deleting Institution: ');
     }
   };
 
@@ -150,13 +141,13 @@ const Institutions = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className='border p-2 rounded w-64'
           />
+          <GoSearch size={23} className='relative top-.5   right-8 '/>
         </div>
       </div>
       <div className='py-2'>
         <button
           onClick={() => {
             setShowInputFields(true);
-            setNewInstitution({ institution_name: '', type: '', rates: '', balance: 0, created_at: '' });
             setEditInstitution(null);
           }}
           className='bg-blue-500 text-black px-4 p-1 rounded-full flex items-center'

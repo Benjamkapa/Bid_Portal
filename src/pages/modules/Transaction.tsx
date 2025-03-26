@@ -5,6 +5,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import formatCurrency from '../../utils/FormatCurrency';
+import { GoSearch } from 'react-icons/go'; 
 
 type Transaction = {
   id: number;
@@ -63,7 +64,6 @@ const Transaction: React.FC = () => {
       <div className='flex justify-between items-center py-6'>
        <h1 className="text-2xl font-bold">Transactions</h1>
         <div className="pb-2 justify-center rounded w-full flex">
-         {/* <FiSearch className="mr-2" /> */}
           <input
            type="text"
            placeholder="Search by Description"
@@ -71,6 +71,7 @@ const Transaction: React.FC = () => {
            onChange={(e) => setSearchTerm(e.target.value)}
            className="border p-2 items-center rounded w-64"
          />
+         <GoSearch size={23} className='relative top-2 right-8 '/>
         </div>
       </div>
 
