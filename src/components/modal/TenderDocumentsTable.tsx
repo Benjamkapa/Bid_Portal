@@ -9,8 +9,8 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { PiSortAscendingThin, PiSortDescendingThin } from "react-icons/pi";
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { FaEdit} from "react-icons/fa";
+// import { useNavigate } from "react-router-dom";
 
 type TenderDocument = {
   id: number;
@@ -32,7 +32,7 @@ interface TenderDocumentsTableProps {
 }
 
 const TenderDocumentsTable: React.FC<TenderDocumentsTableProps> = ({ data, onEditClick }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 

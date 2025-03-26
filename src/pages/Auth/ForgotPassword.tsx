@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Button from '../../components/button/Button';
 import gameLogo from "../../assets/images/game-logo.png";
-import axios from 'axios';
+// import axios from 'axios';
 import { FiChevronLeft } from 'react-icons/fi';
 
 const ForgotPassword: React.FC = () => {
@@ -14,9 +14,9 @@ const ForgotPassword: React.FC = () => {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://197.248.122.31:3000/api/auth/forgot-password', {
-        email,
-      });
+      // const response = await axios.post('http://197.248.122.31:3000/api/auth/forgot-password', {
+      //   email,
+      // });
       setMessage('Password reset link sent to your email');
       setTimeout(() => {
         navigate('/login');

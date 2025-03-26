@@ -9,8 +9,8 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { PiSortAscendingThin, PiSortDescendingThin } from "react-icons/pi";
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { FaEdit, FaTrash } from "react-icons/fa";
+// import { useNavigate } from "react-router-dom";
 
 type Player = {
   player_id: number;
@@ -26,7 +26,7 @@ type Player = {
 
 // Table component
 const PlayersTable: React.FC<{ data: Player[] }> = ({ data }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
@@ -102,11 +102,12 @@ const PlayersTable: React.FC<{ data: Player[] }> = ({ data }) => {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  // Action handlers
-  const handleView = (player: Player) => {
-    console.log("View:", player);
-    navigate(`/games/${player?.player_id}`);
-  };
+  // // Action handlers
+  // const handleView = (player: Player) => {
+  //   console.log("View:", player);
+  //   navigate(`/games/${player?.player_id}`);
+  // };
+  
 
   const handleEdit = (player: Player) => {
     console.log("Edit:", player);

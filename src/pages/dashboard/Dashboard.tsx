@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { SiVirustotal } from "react-icons/si";
 import { MdOutlinePendingActions } from "react-icons/md";

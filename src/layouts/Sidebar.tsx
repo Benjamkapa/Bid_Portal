@@ -15,7 +15,7 @@ import {
   FiUpload,
   FiBriefcase,
   FiDollarSign,
-  FiUsers,
+  // FiUsers,
   FiUser,
 } from "react-icons/fi";
 interface SidebarProps {
