@@ -140,7 +140,7 @@ const Documents: React.FC = () => {
       {loading ? (
         <Skeleton count={10} height={40} />
       ) : (
-        <table className='min-w-full bg-white text-xs '>
+        <table className='min-w-full bg-white text-sm '>
           <thead>
             <tr>
               <th className='py-4 px-4 border-b'>Beneficiary</th>
