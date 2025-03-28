@@ -60,11 +60,11 @@ const authState = useSelector((state: RootState) => state.auth);
     <section className='h-screen bg-white'>
       <div className='grid grid-cols-2 h-full'>
         <div className='h-full'>
-<img src={loginBg} className='w-full h-full' alt="" />
+              <img src={loginBg} className='w-full h-full' alt="" />
         </div>
         <div className=' w-3/4 mx-auto'>
-        <div>
-          <img src={gameLogo} alt="game-logo" className='h-full w-full object-cover'/>
+        <div >
+          <img src={gameLogo} alt="game-logo" className='h-[200px] w-full object-cover'/>
 
         </div>
           {/* <p>Login into you account</p> */}
@@ -89,6 +89,10 @@ const authState = useSelector((state: RootState) => state.auth);
         </div>
       </div>
     </section>
+
+
+
+
   );
 };
 
