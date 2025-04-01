@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiPlus, FiTrash, FiEdit} from 'react-icons/fi';
+import { FiPlus, FiTrash, FiEdit } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-import { GoSearch } from "react-icons/go";
+import { GoSearch } from 'react-icons/go';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { RootState } from "../../redux/store";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -10,24 +12,34 @@ type User = {
   id: number;
   name: string;
   email: string;
-  phone: string; 
-  institution_name:string;
-  role?: string;
+  phone: string;
+  institution_name: string;
+  role: string;
+};
+
+type Institution = {
+  id: number;
+  institution_name: string;
 };
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [newUser, setNewUser] = useState({ name: '', email: '', phone: '', role: '' });
+  const [newUser, setNewUser] = useState({ name: '', email: '', phone: '' });
+  const [newAdmin, setNewAdmin] = useState({ name: '', email: '', phone: '', institution_id: 0 });
   const [showInputFields, setShowInputFields] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [editUser, setEditUser] = useState<User | null>(null);
   const inputRef = useRef<HTMLDivElement>(null);
+  const [institutions, setInstitutions] = useState<Institution[]>([]);
+  const authState = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     fetchUsers();
+    fetchInstitutions(); // Fetch institutions on mount
   }, []);
-  
+
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -46,9 +58,24 @@ const Users: React.FC = () => {
     }
   };
 
+  const fetchInstitutions = async () => {
+    try {
+      const response = await axios.get('http://197.248.122.31:3000/api/all-institutions/', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setInstitutions(response.data);
+    } catch (error) {
+      console.error('Error fetching institutions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAddUser = async () => {
     const token = localStorage.getItem('token');
-    if (newUser.name && newUser.email && newUser.role && newUser.phone) {
+    if (newUser.name && newUser.email && newUser.phone) {
       try {
         const response = await axios.post(
           'http://197.248.122.31:3000/api/add-user',
@@ -56,7 +83,6 @@ const Users: React.FC = () => {
             name: newUser.name,
             email: newUser.email,
             phone: newUser.phone,
-            role: newUser.role,
           },
           {
             headers: {
@@ -65,12 +91,47 @@ const Users: React.FC = () => {
           }
         );
         setUsers((prevUsers) => [...prevUsers, response.data]);
-        setNewUser({ name: '', email: '', phone: '', role: '' });
+        setNewUser({ name: '', email: '', phone: '' });
         setShowInputFields(false);
+        setIsAdmin(false);
         toast.success('User added successfully');
+        fetchUsers();
       } catch (error) {
         console.error('Error adding user:', error);
         toast.error('Error adding user');
+      }
+    } else {
+      toast.error('Please fill in all fields');
+    }
+  };
+
+  const handleAddAdmin = async () => {
+    const token = localStorage.getItem('token');
+    if (newAdmin.name && newAdmin.email && newAdmin.phone && newAdmin.institution_id) {
+      try {
+        const response = await axios.post(
+          'http://197.248.122.31:3000/api/add-admin',
+          {
+            name: newAdmin.name,
+            email: newAdmin.email,
+            phone: newAdmin.phone,
+            institution_id: newAdmin.institution_id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setUsers((prevUsers) => [...prevUsers, response.data]);
+        setNewAdmin({ name: '', email: '', phone: '', institution_id: 0 });
+        setShowInputFields(false);
+        setIsAdmin(false);
+        toast.success('Admin added successfully');
+        fetchUsers();
+      } catch (error) {
+        console.error('Error adding admin:', error);
+        toast.error('Error adding admin');
       }
     } else {
       toast.error('Please fill in all fields');
@@ -89,7 +150,7 @@ const Users: React.FC = () => {
       toast.success('User deleted successfully');
     } catch (error) {
       console.error('Error deleting user:', error);
-      toast.error('Error deleting user');
+      toast.error('Error deleting data');
     }
   };
 
@@ -99,9 +160,9 @@ const Users: React.FC = () => {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      role: user.role || '',
     });
     setShowInputFields(true);
+    setIsAdmin(false);
   };
 
   const handleSaveEdit = async () => {
@@ -117,18 +178,9 @@ const Users: React.FC = () => {
             },
           }
         );
-        setUsers(users.map((user) => (user.id === editUser.id ? response.data : user))); 
-        // Merge the updated fields with the existing user data
-        setUsers(
-          users.map((user) =>
-            user.id === editUser.id
-              ? { ...user, ...newUser } // Merge existing user data with updated fields
-              : user
-          )
-        );
-
+        setUsers(users.map((user) => (user.id === editUser.id ? response.data : user)));
         setEditUser(null);
-        setNewUser({ name: '', email: '', phone: '', role: '' });
+        setNewUser({ name: '', email: '', phone: '' });
         setShowInputFields(false);
         toast.success('User updated successfully');
       } catch (error) {
@@ -142,132 +194,196 @@ const Users: React.FC = () => {
     user.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const formatRole = () => {
+    let role = '';
+    switch (authState.user?.role) {
+      case 'super_admin':
+        role = 'Super Admin';
+        break;
+      case 'admin':
+        role = 'Admin';
+        break;
+      case 'user':
+        role = 'User';
+        break;
+      default:
+        break;
+    }
+    return role;
+  };
+
   return (
-      <div>
-      <div className='flex items-center justify-between py-6'>
-      <h1 className='text-2xl font-bold mb-5'>Users</h1>
-        <div className='flex items-center justify-center w-full'>
+    <div>
+      {/* Search Bar */}
+      <div className="flex items-center justify-between py-6">
+        <h1 className="text-2xl font-bold mb-5">Users</h1>
+        <div className="flex items-center justify-center w-full">
           <input
-            type='text'
-            placeholder='Search by User Name'
+            type="text"
+            placeholder="Search by User Name"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className='border p-2 items-center rounded w-64'
+            className="border p-2 items-center rounded w-64"
           />
-          <GoSearch size={23} className='relative top-.5 right-8 '/>
+          <GoSearch size={23} className="relative top-.5 right-8" />
         </div>
       </div>
-      <div className='py-2'>
+
+      {/* Action Buttons */}
+      <div className="py-2 flex">
         <button
           onClick={() => {
             setShowInputFields(true);
-            setNewUser({ name: '', email: '', phone: '', role: '' });
+            setNewUser({ name: '', email: '', phone: '' });
             setEditUser(null);
+            setIsAdmin(false);
           }}
-          className='bg-blue-500 text-black rounded-full px-2 py-1 cursor-pointer flex items-center'
+          className="bg-blue-500 text-black rounded-full px-2 py-1 cursor-pointer flex items-center"
         >
-          <FiPlus className='mr-1' /> Add User
+          <FiPlus className="mr-1" /> Add User
         </button>
-        </div>
+        {/* Conditionally render the Add Admin button */}
+        {formatRole() === 'Super Admin' && (
+          <button
+            onClick={() => {
+              setShowInputFields(true);
+              setIsAdmin(true);
+              setNewAdmin({ name: '', email: '', phone: '', institution_id: 0 });
+              setEditUser(null);
+            }}
+            className="bg-green-500 text-black rounded-full px-2 py-1 cursor-pointer flex items-center ml-4"
+          >
+            <FiPlus className="mr-1" /> Add Admin
+          </button>
+        )}
+      </div>
 
-        { loading ? (
-          <Skeleton height={10} count={20} /> // Skeleton component for loading animation
-        ) : (
-          <table className='min-w-full bg-white text-center'>
-              <thead>
-                <tr className='bg-gray-400'>
-                  <th className='py-2 px-4 border-b'>Name</th>
-                  <th className='py-2 px-4 border-b'>Email</th>
-                  <th className='py-2 px-4 border-b'>Phone</th>
-                  <th className='py-2 px-4 border-b'>Institution Name</th>
-                  <th className='py-2 px-4 border-b'>Role</th>
-                  <th className='py-2 px-4 border-b'>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map((user, index) => (
-                  <tr key={user.id}
-                  className={`text-center ${index % 2 === 0 ? 'bg-gray-200' : ''}`}
-                  >
-                    <td className='py-2 px-4'>{user.name}</td>
-                    <td className='py-2 px-4'>{user.email}</td>
-                    <td className='py-2 px-4'>{user.phone}</td>
-                    <td className='py-2 px-4'>{user.institution_name}</td>
-                    <td className='py-2 px-4'>{user.role}</td>
-                    <td className='py-2 px-4'>
-                      <div className='flex justify-center space-x-2'>
-                        <button
-                          onClick={() => handleEditUser(user)}
-                          className='text-blue-500 hover:text-blue-700'
-                        >
-                          <FiEdit size={20} title='Edit' />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteUser(user.id)}
-                          className='text-red-500 hover:text-red-700'
-                        >
-                          <FiTrash size={20} title='Delete' />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-        )
-      }
-      <div className='my-3' ref={inputRef}>
-        {showInputFields ? (
+      {/* Table of Users */}
+      {loading ? (
+        <Skeleton height={10} count={20} />
+      ) : (
+        <table className="min-w-full bg-white text-center">
+          <thead>
+            <tr className="bg-gray-400">
+              <th className="py-2 px-4 border-b">Name</th>
+              <th className="py-2 px-4 border-b">Email</th>
+              <th className="py-2 px-4 border-b">Phone</th>
+              <th className="py-2 px-4 border-b">Institution Name</th>
+              <th className="py-2 px-4 border-b">Role</th>
+              <th className="py-2 px-4 border-b">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredUsers.map((user, index) => (
+              <tr key={user.id} className={`text-center ${index % 2 === 0 ? 'bg-gray-200' : ''}`}>
+                <td className="py-2 px-4">{user.name}</td>
+                <td className="py-2 px-4">{user.email}</td>
+                <td className="py-2 px-4">{user.phone}</td>
+                <td className="py-2 px-4">{user.institution_name}</td>
+                <td className="py-2 px-4">{user.role}</td>
+                <td className="py-2 px-4">
+                  <div className="flex justify-center space-x-2">
+                    <button
+                      onClick={() => handleEditUser(user)}
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      <FiEdit size={20} title="Edit" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUser(user.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <FiTrash size={20} title="Delete" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {/* User/Admin Form */}
+      <div className="my-3 pt-2" ref={inputRef}>
+        {showInputFields && (
           <>
-            <input
-              type='text'
-              placeholder='User Name'
-              value={newUser.name}
-              onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-              className='border p-2 rounded m-1'
-            />
-            <input
-              type='email'
-              placeholder='Email'
-              value={newUser.email}
-              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-              className='border p-2 rounded m-1'
-            />
-            <input
-              type='text' // Changed from 'number' to 'text' to handle phone numbers with special characters
-              placeholder='Phone Number'
-              value={newUser.phone}
-              onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
-              className='border p-2 rounded m-1'
-            />
-            <select
-              value={newUser.role}
-              onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-              className='border p-2 rounded m-1'
-            >
-              <option value='' disabled>
-                Select Role
-              </option>
-              <option value='admin'>Admin</option>
-              <option value='user'>User</option>
-            </select>
-            {editUser ? (
-              <button
-                onClick={handleSaveEdit}
-                className='bg-blue-500 text-black p-2 rounded flex items-center'
-              >
-                Save Changes
-              </button>
+            {isAdmin ? (
+              <>
+                <input
+                  type="text"
+                  placeholder="Admin Name"
+                  value={newAdmin.name}
+                  onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+                  className="border p-1 rounded m-1"
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={newAdmin.email}
+                  onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                  className="border p-1 rounded m-1"
+                />
+                <input
+                  type="text"
+                  placeholder="Phone Number"
+                  value={newAdmin.phone}
+                  onChange={(e) => setNewAdmin({ ...newAdmin, phone: e.target.value })}
+                  className="border p-1 rounded m-1"
+                />
+                <select
+                  value={newAdmin.institution_id}
+                  onChange={(e) => setNewAdmin({ ...newAdmin, institution_id: parseInt(e.target.value) })}
+                  className="border p-1 rounded m-1"
+                >
+                  <option value={0} disabled>
+                    Select Institution
+                  </option>
+                  {institutions.map((institution) => (
+                    <option key={institution.id} value={institution.id}>
+                      {institution.institution_name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleAddAdmin}
+                  className="bg-green-500 text-black p-1 rounded flex items-center"
+                >
+                  Save Admin
+                </button>
+              </>
             ) : (
-              <button
-                onClick={handleAddUser}
-                className='bg-blue-500 text-black p-2 rounded flex items-center'
-              >
-                Save User
-              </button>
+              <>
+                <input
+                  type="text"
+                  placeholder="User Name"
+                  value={newUser.name}
+                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  className="border p-1 rounded m-1"
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  className="border p-1 rounded m-1"
+                />
+                <input
+                  type="text"
+                  placeholder="Phone Number"
+                  value={newUser.phone}
+                  onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+                  className="border p-1 rounded m-1"
+                />
+                <button
+                  onClick={editUser ? handleSaveEdit : handleAddUser}
+                  className="bg-blue-500 text-black p-1 rounded flex items-center"
+                >
+                  {editUser ? 'Save Edit' : 'Save User'}
+                </button>
+              </>
             )}
           </>
-        ) : null}
+        )}
       </div>
     </div>
   );

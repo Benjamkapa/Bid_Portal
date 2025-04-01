@@ -1,9 +1,7 @@
-
-
-
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { useEffect } from "react";
+import gameLogo from "../assets/images/side-logo.png";
 import { getUserProfile } from "../redux/authSlice";
 import { NavLink } from "react-router-dom";
 import {
@@ -55,15 +53,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed }) => {
   const filteredMenuItems = menuItems.filter((item) => allowedPaths.includes(item.path));
 
   return (
-    <div className={`fixed top-0 left-0 h-screen  bg-gray-800 text-white p-4 flex flex-col transition-all duration-300 ${isCollapsed ? "w-20" : "w-60"}`}>
+    <div className={`fixed top-0 left-0 h-screen  bg-gray-800 text-white p-4 flex flex-col transition-all duration-300 ${isCollapsed ? "w-18" : "w-60"}`}>
       {/* Sidebar Toggle Button */}
+      <div className="flex">
       <button
-        className="text-white mb-6 p-2 bg-gray-700 rounded-md flex items-center justify-between cursor-pointer"
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="text-white mb-6 p-2 rounded-md flex items-center justify-between"
       >
-        {!isCollapsed && <span className="text-blue-500 font-bold text-lg">Bid Portal</span>}
-        {isCollapsed ? <FiChevronRight size={24} /> : <FiChevronLeft size={24} />}
+        {!isCollapsed && <span className="text-blue-500 font-bold text-lg"><img src={gameLogo} className="px-3 pt-1"></img> </span>}
+        {/* img src={gameLogo} alt="game-logo" className="m-5"></img> */}
       </button>
+      {isCollapsed ? <FiChevronRight size={24} onClick={() => setIsCollapsed(!isCollapsed)} className=" "/> : <FiChevronLeft size={55} onClick={() => setIsCollapsed(!isCollapsed)}  />}
+      </div>
 
       {/* Menu Items */}
       <ul className="flex flex-col space-y-4">

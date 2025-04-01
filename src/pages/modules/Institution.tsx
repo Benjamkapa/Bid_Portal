@@ -10,7 +10,7 @@ import { GoSearch } from 'react-icons/go';
 interface Institution {
   id: number;
   institution_name: string;
-  type: string;
+  type: string | null;
   balance: number;
   rates: string;
   created_at: string;
@@ -24,15 +24,16 @@ const Institutions = () => {
   const [newInstitution, setNewInstitution] = useState<Institution>({
     id: 0,
     institution_name: '',
-    type: '',
+    type: null,
     rates: '',
     balance: 0,
     created_at: '',
-    organization_type: '', // To store the selected or typed organization type
+    organization_type: '',
   });
   const [editInstitution, setEditInstitution] = useState<Institution | null>(null);
   const [showInputFields, setShowInputFields] = useState(false);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const [organizationTypes, setOrganizationTypes] = useState<string[]>([]);
 
   useEffect(() => {
@@ -86,7 +87,7 @@ const Institutions = () => {
         setInstitutions([...institutions, { ...newInstitution, id: response.data.id }]);
         setShowInputFields(false);
         toast.success('Institution added successfully');
-        fetchInstitutions(); // Refresh the list
+        fetchInstitutions();
       } catch (error) {
         console.error('Error adding institution:', error);
         toast.error('Error adding institution');
@@ -98,7 +99,7 @@ const Institutions = () => {
 
   const handleEditInstitution = (institution: Institution) => {
     setEditInstitution(institution);
-    setNewInstitution(institution); // Pre-populate form with the selected institution data
+    setNewInstitution(institution);
     setShowInputFields(true);
   };
 
@@ -110,9 +111,9 @@ const Institutions = () => {
           `http://197.248.122.31:3000/api/edit-institution/${editInstitution.id}`,
           {
             institution_name: newInstitution.institution_name,
-            organization_type: newInstitution.organization_type, // Save the selected organization_type
+            organization_type: newInstitution.organization_type,
             rates: newInstitution.rates,
-            type: newInstitution.type
+            type: newInstitution.type,
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -124,7 +125,7 @@ const Institutions = () => {
         setEditInstitution(null);
         setShowInputFields(false);
         toast.success('Institution updated successfully');
-        fetchInstitutions(); // Refresh the list after editing
+        fetchInstitutions();
       } catch (error) {
         console.error('Error updating institution:', error);
         toast.error('Error updating institution');
@@ -140,7 +141,7 @@ const Institutions = () => {
       });
       setInstitutions(institutions.filter((institution) => institution.id !== id));
       toast.success('Institution deleted successfully');
-      fetchInstitutions(); // Refresh the list after deletion
+      fetchInstitutions();
     } catch (error) {
       console.error('Error deleting institution:', error);
       toast.error('Error deleting institution');
@@ -163,7 +164,7 @@ const Institutions = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className='border p-2 rounded w-64'
           />
-          <GoSearch size={23} className='relative top-.5 right-8 '/>
+          <GoSearch size={23} className='relative top-.5 right-8 ' />
         </div>
       </div>
       <div className='py-2'>
@@ -179,13 +180,13 @@ const Institutions = () => {
       </div>
       {loading ? (
         <Skeleton count={10} height={40} />
-      ) : (
+      ) : institutions.length > 0 ? (
         <table className='min-w-full bg-white text-left'>
           <thead>
             <tr className='bg-gray-400 text-center'>
               <th className='py-2 px-4 border-b'>Institution Name</th>
-              <th className='py-2 px-4 border-b'>Organization Cartegory</th>
-              <th className='py-2 px-4 border-b'>Type </th>
+              <th className='py-2 px-4 border-b'>Organization Category</th>
+              <th className='py-2 px-4 border-b'>Type</th>
               <th className='py-2 px-4 border-b'>Balance</th>
               <th className='py-2 px-4 border-b'>Rate</th>
               <th className='py-2 px-4 border-b'>Date Created</th>
@@ -200,7 +201,9 @@ const Institutions = () => {
                 <td className='py-2 px-4'>{institution.type}</td>
                 <td className='py-2 px-4'>{formatCurrency(Number(institution.balance))}</td>
                 <td className='py-2 px-4'>{institution.rates}</td>
-                <td className='py-2 px-4'>{new Date(institution.created_at).toLocaleDateString()}</td>
+                <td className='py-2 px-4'>
+                  {new Date(institution.created_at).toLocaleDateString()}
+                </td>
                 <td className='py-2 px-4'>
                   <button
                     onClick={() => handleEditInstitution(institution)}
@@ -219,6 +222,8 @@ const Institutions = () => {
             ))}
           </tbody>
         </table>
+      ) : (
+        <div>No institutions available</div>
       )}
       {showInputFields && (
         <div className='my-3' ref={inputRef}>
@@ -241,7 +246,7 @@ const Institutions = () => {
             onChange={(e) => setNewInstitution({ ...newInstitution, organization_type: e.target.value })}
             className="border p-2 rounded m-1"
           >
-            <option value="" disabled>Select Organization Cartegory</option>
+            <option value="" disabled>Select Organization Category</option>
             {organizationTypes.map((type, index) => (
               <option key={index} value={type}>
                 {type}
@@ -249,15 +254,14 @@ const Institutions = () => {
             ))}
           </select>
 
-          {/* Custom input for adding a new organization type */}
           <input
             type='text'
-            placeholder='Organization type'
-            value={newInstitution.type}
+            placeholder='Organization Type'
+            value={newInstitution.type || ''}
             onChange={(e) => setNewInstitution({ ...newInstitution, type: e.target.value })}
             className='border p-2 rounded m-1'
           />
-          
+
           {editInstitution ? (
             <button onClick={handleSaveEdit} className='bg-blue-500 text-black p-2 rounded'>
               Save Changes
