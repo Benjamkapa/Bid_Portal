@@ -24,8 +24,8 @@ interface SidebarProps {
 }
 const menuItems = [
   { icon: <FiHome size={24} />, label: "Dashboard", path: "/" },
-  { icon: <FiUpload size={24} />, label: "Upload Tenders", path: "/uploads" },
-  { icon: <FiFileText size={24} />, label: "Tenders", path: "/tenders" },
+  { icon: <FiUpload size={24} />, label: "Upload Documents", path: "/uploads" },
+  { icon: <FiFileText size={24} />, label: "Documents", path: "/tenders" },
   { icon: <FiCheckSquare size={24} />, label: "Verify Documents", path: "/verify" },
   { icon: <FiBriefcase size={24} />, label: "Institutions", path: "/institutions" },
   { icon: <FiDollarSign size={24} />, label: "Transactions", path: "/transactions" },

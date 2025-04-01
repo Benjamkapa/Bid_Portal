@@ -158,9 +158,20 @@ const navigate=useNavigate()
   return (
     <div className='min-h-screen'>
       <div className='flex justify-between items-center mb-5'>
-        <h1 className='text-xl font-bold'>{tenderNo? "Update Tender Details":"Enter Tender Details"}</h1>
+        <h1 className='text-xl font-bold'>{tenderNo? "Update Docuent Details":"Enter Document Details"}</h1>
       </div>
       <form  autoComplete='off' className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-white rounded p-5 w-full max-w-4xl'>
+      <div>
+          <p>Document type</p>
+
+<select name="document_type" className="p-2 border w-full">
+  <option value="">Bid security</option>
+  <option value="">Performance security</option>
+  <option value="">Performance quarantee</option>
+  <option value="">Other</option>
+
+</select>
+        </div>
         <div>
           <p>Beneficiary</p>
           <input
@@ -194,11 +205,11 @@ const navigate=useNavigate()
           />
         </div>
         <div>
-          <p>Guarantee No</p>
+          <p>Security No</p>
           <input
             type='text'
             name='guaranteeNo'
-            placeholder='Enter guarantee number'
+            placeholder='Enter security number'
             className='border w-full p-2 rounded focus:border-red-500'
             value={formData.guaranteeNo}
             onChange={handleChange}
@@ -227,11 +238,11 @@ const navigate=useNavigate()
           />
         </div>
         <div>
-          <p>Tender Amount</p>
+          <p>Security Amount</p>
           <input
             type='number'
             name='tenderAmount'
-            placeholder='Enter tender amount'
+            placeholder='Enter security amount'
             className='border w-full p-2 rounded focus:border-red-500'
             value={formData.tenderAmount}
             onChange={handleChange}

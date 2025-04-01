@@ -13,24 +13,27 @@ interface Institution {
   type: string;
   balance: number;
   rates: string;
-  created_at: string; 
+  created_at: string;
+  organization_type: string;
 }
 
 const Institutions = () => {
   const [institutions, setInstitutions] = useState<Institution[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [newInstitution, setNewInstitution] = useState<Institution>({ 
+  const [newInstitution, setNewInstitution] = useState<Institution>({
     id: 0,
-    institution_name: '', 
-    type: '', 
-    rates: '', 
+    institution_name: '',
+    type: '',
+    rates: '',
     balance: 0,
-    created_at: '' 
+    created_at: '',
+    organization_type: '', // To store the selected or typed organization type
   });
   const [editInstitution, setEditInstitution] = useState<Institution | null>(null);
   const [showInputFields, setShowInputFields] = useState(false);
   const inputRef = useRef(null);
+  const [organizationTypes, setOrganizationTypes] = useState<string[]>([]);
 
   useEffect(() => {
     fetchInstitutions();
@@ -43,18 +46,37 @@ const Institutions = () => {
       const response = await axios.get('http://197.248.122.31:3000/api/all-institutions/', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setInstitutions(response.data);
+  
+      // Type guard: Check if response.data is an array
+      if (Array.isArray(response.data)) {
+        const institutions = response.data as Institution[];
+        setInstitutions(institutions);
+  
+        const types = [
+          ...new Set(
+            institutions
+              .map((institution: Institution) => institution.organization_type)
+              .filter((type: string | null) => type !== null && type !== undefined)
+          ),
+        ];
+  
+        setOrganizationTypes(types);
+      } else {
+        console.error('Invalid data format');
+        toast.error('Error fetching institutions');
+      }
     } catch (error) {
       console.error('Error fetching institutions:', error);
-      toast.error('Error fetching institutions: ');
+      toast.error('Error fetching institutions');
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleAddInstitution = async () => {
     const token = localStorage.getItem('token');
-    if (newInstitution.institution_name && newInstitution.type) {
+    if (newInstitution.institution_name && newInstitution.organization_type && newInstitution.type) {
       try {
         const response = await axios.post(
           'http://197.248.122.31:3000/api/add-institution/',
@@ -64,10 +86,10 @@ const Institutions = () => {
         setInstitutions([...institutions, { ...newInstitution, id: response.data.id }]);
         setShowInputFields(false);
         toast.success('Institution added successfully');
-        fetchInstitutions(); 
+        fetchInstitutions(); // Refresh the list
       } catch (error) {
         console.error('Error adding institution:', error);
-        toast.error('Error adding institution: ');
+        toast.error('Error adding institution');
       }
     } else {
       toast.error('Please fill in all fields');
@@ -76,6 +98,7 @@ const Institutions = () => {
 
   const handleEditInstitution = (institution: Institution) => {
     setEditInstitution(institution);
+    setNewInstitution(institution); // Pre-populate form with the selected institution data
     setShowInputFields(true);
   };
 
@@ -85,10 +108,11 @@ const Institutions = () => {
       try {
         await axios.put(
           `http://197.248.122.31:3000/api/edit-institution/${editInstitution.id}`,
-          { 
-            institution_name: newInstitution.institution_name, 
-            type: newInstitution.type, 
-            rates: newInstitution.rates 
+          {
+            institution_name: newInstitution.institution_name,
+            organization_type: newInstitution.organization_type, // Save the selected organization_type
+            rates: newInstitution.rates,
+            type: newInstitution.type
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -103,7 +127,7 @@ const Institutions = () => {
         fetchInstitutions(); // Refresh the list after editing
       } catch (error) {
         console.error('Error updating institution:', error);
-        toast.error('Error updating institution: ');
+        toast.error('Error updating institution');
       }
     }
   };
@@ -112,16 +136,14 @@ const Institutions = () => {
     const token = localStorage.getItem('token');
     try {
       await axios.delete(`http://197.248.122.31:3000/api/delete-institution/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setInstitutions(institutions.filter((institution) => institution.id !== id));
       toast.success('Institution deleted successfully');
       fetchInstitutions(); // Refresh the list after deletion
     } catch (error) {
-      console.error('Error deleting Institution:', error);
-      toast.error('Error deleting Institution: ');
+      console.error('Error deleting institution:', error);
+      toast.error('Error deleting institution');
     }
   };
 
@@ -141,7 +163,7 @@ const Institutions = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className='border p-2 rounded w-64'
           />
-          <GoSearch size={23} className='relative top-.5   right-8 '/>
+          <GoSearch size={23} className='relative top-.5 right-8 '/>
         </div>
       </div>
       <div className='py-2'>
@@ -162,7 +184,8 @@ const Institutions = () => {
           <thead>
             <tr className='bg-gray-400 text-center'>
               <th className='py-2 px-4 border-b'>Institution Name</th>
-              <th className='py-2 px-4 border-b'>Type</th>
+              <th className='py-2 px-4 border-b'>Organization Cartegory</th>
+              <th className='py-2 px-4 border-b'>Type </th>
               <th className='py-2 px-4 border-b'>Balance</th>
               <th className='py-2 px-4 border-b'>Rate</th>
               <th className='py-2 px-4 border-b'>Date Created</th>
@@ -173,6 +196,7 @@ const Institutions = () => {
             {filteredInstitutions.map((institution, index) => (
               <tr key={institution.id} className={`text-center ${index % 2 === 0 ? 'bg-gray-200' : ''}`}>
                 <td className='py-2 px-4'>{institution.institution_name}</td>
+                <td className='py-2 px-4'>{institution.organization_type}</td>
                 <td className='py-2 px-4'>{institution.type}</td>
                 <td className='py-2 px-4'>{formatCurrency(Number(institution.balance))}</td>
                 <td className='py-2 px-4'>{institution.rates}</td>
@@ -207,18 +231,33 @@ const Institutions = () => {
           />
           <input
             type='text'
-            placeholder='Type'
-            value={newInstitution.type}
-            onChange={(e) => setNewInstitution({ ...newInstitution, type: e.target.value })}
-            className='border p-2 rounded m-1'
-          />
-          <input
-            type='text'
             placeholder='Rates'
             value={newInstitution.rates}
             onChange={(e) => setNewInstitution({ ...newInstitution, rates: e.target.value })}
             className='border p-2 rounded m-1'
           />
+          <select
+            value={newInstitution.organization_type || ''}
+            onChange={(e) => setNewInstitution({ ...newInstitution, organization_type: e.target.value })}
+            className="border p-2 rounded m-1"
+          >
+            <option value="" disabled>Select Organization Cartegory</option>
+            {organizationTypes.map((type, index) => (
+              <option key={index} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+
+          {/* Custom input for adding a new organization type */}
+          <input
+            type='text'
+            placeholder='Organization type'
+            value={newInstitution.type}
+            onChange={(e) => setNewInstitution({ ...newInstitution, type: e.target.value })}
+            className='border p-2 rounded m-1'
+          />
+          
           {editInstitution ? (
             <button onClick={handleSaveEdit} className='bg-blue-500 text-black p-2 rounded'>
               Save Changes

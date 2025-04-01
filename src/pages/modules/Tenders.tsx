@@ -111,7 +111,7 @@ const Documents: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center pb-10">
-        <h1 className='text-2xl'>Tenders List</h1>
+        <h1 className='text-2xl'>Documents List</h1>
         <div className='relative'>
           <input
             type='text'
@@ -226,9 +226,7 @@ const Documents: React.FC = () => {
                 </tr>
               )
             }
-            
-
-            
+                     
             )}
           </tbody>
         </table>
