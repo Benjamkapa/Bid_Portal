@@ -34,6 +34,7 @@ const Users: React.FC = () => {
   const inputRef = useRef<HTMLDivElement>(null);
   const [institutions, setInstitutions] = useState<Institution[]>([]);
   const authState = useSelector((state: RootState) => state.auth);
+  const [emailError, setEmailError] = useState<string>("");
 
   useEffect(() => {
     fetchUsers();
@@ -75,6 +76,12 @@ const Users: React.FC = () => {
 
   const handleAddUser = async () => {
     const token = localStorage.getItem('token');
+    // Validate the email before proceeding
+    if (!validateEmail(newUser.email)) {
+      toast.error('Please enter a valid email');
+      return;
+    }
+
     if (newUser.name && newUser.email && newUser.phone) {
       try {
         const response = await axios.post(
@@ -107,6 +114,12 @@ const Users: React.FC = () => {
 
   const handleAddAdmin = async () => {
     const token = localStorage.getItem('token');
+    // Validate the email before proceeding
+    if (!validateEmail(newAdmin.email)) {
+      toast.error('Please enter a valid email');
+      return;
+    }
+
     if (newAdmin.name && newAdmin.email && newAdmin.phone && newAdmin.institution_id) {
       try {
         const response = await axios.post(
@@ -167,6 +180,12 @@ const Users: React.FC = () => {
 
   const handleSaveEdit = async () => {
     const token = localStorage.getItem('token');
+    // Validate the email before proceeding
+    if (!validateEmail(newUser.email)) {
+      toast.error('Please enter a valid email');
+      return;
+    }
+
     if (editUser) {
       try {
         const response = await axios.put(
@@ -183,6 +202,7 @@ const Users: React.FC = () => {
         setNewUser({ name: '', email: '', phone: '' });
         setShowInputFields(false);
         toast.success('User updated successfully');
+        fetchUsers();
       } catch (error) {
         console.error('Error updating user:', error);
         toast.error('Error updating user');
@@ -210,6 +230,17 @@ const Users: React.FC = () => {
         break;
     }
     return role;
+  };
+
+  // Simple email validation that checks if the email contains "@" symbol anywhere
+  const validateEmail = (email: string) => {
+    if (email.includes('@')) {
+      setEmailError(""); // Clear any previous error if the email is valid
+      return true;
+    } else {
+      setEmailError("Email must contain '@'"); // Show error if '@' is missing
+      return false;
+    }
   };
 
   return (
@@ -323,6 +354,7 @@ const Users: React.FC = () => {
                   onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
                   className="border p-1 rounded m-1"
                 />
+                {emailError && <span className="text-red-500 text-xs">{emailError}</span>}
                 <input
                   type="text"
                   placeholder="Phone Number"
@@ -335,9 +367,7 @@ const Users: React.FC = () => {
                   onChange={(e) => setNewAdmin({ ...newAdmin, institution_id: parseInt(e.target.value) })}
                   className="border p-1 rounded m-1"
                 >
-                  <option value={0} disabled>
-                    Select Institution
-                  </option>
+                  <option value={0} disabled>Select Institution</option>
                   {institutions.map((institution) => (
                     <option key={institution.id} value={institution.id}>
                       {institution.institution_name}
@@ -346,7 +376,7 @@ const Users: React.FC = () => {
                 </select>
                 <button
                   onClick={handleAddAdmin}
-                  className="bg-green-500 text-black p-1 rounded flex items-center"
+                  className="bg-green-500 text-white py-2 px-4 rounded ml-2"
                 >
                   Save Admin
                 </button>
@@ -355,7 +385,7 @@ const Users: React.FC = () => {
               <>
                 <input
                   type="text"
-                  placeholder="User Name"
+                  placeholder="Name"
                   value={newUser.name}
                   onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
                   className="border p-1 rounded m-1"
@@ -367,6 +397,7 @@ const Users: React.FC = () => {
                   onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                   className="border p-1 rounded m-1"
                 />
+                {emailError && <span className="text-red-500 text-xs">{emailError}</span>}
                 <input
                   type="text"
                   placeholder="Phone Number"
@@ -376,7 +407,7 @@ const Users: React.FC = () => {
                 />
                 <button
                   onClick={editUser ? handleSaveEdit : handleAddUser}
-                  className="bg-blue-500 text-black p-1 rounded flex items-center"
+                  className="bg-blue-500 text-white py-2 px-4 rounded ml-2"
                 >
                   {editUser ? 'Save Edit' : 'Save User'}
                 </button>
@@ -384,7 +415,7 @@ const Users: React.FC = () => {
             )}
           </>
         )}
-      </div>
+      </div>  
     </div>
   );
 };
