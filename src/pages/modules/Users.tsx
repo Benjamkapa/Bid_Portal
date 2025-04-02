@@ -238,7 +238,6 @@ const Users: React.FC = () => {
       setEmailError(""); // Clear any previous error if the email is valid
       return true;
     } else {
-      setEmailError("Email must contain '@'"); // Show error if '@' is missing
       return false;
     }
   };
