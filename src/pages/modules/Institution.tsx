@@ -54,6 +54,16 @@ const Institutions = () => {
       if (Array.isArray(response.data)) {
         const institutions = response.data as Institution[];
         setInstitutions(institutions);
+
+        const types = [
+          ...new Set(
+            institutions
+              .map((institution: Institution) => institution.organization_type)
+              .filter((type: string | null) => type !== null && type !== undefined)
+          ),
+        ];
+
+        setOrganizationTypes(types);
       } else {
         console.error('Invalid data format');
         toast.error('Error fetching institutions');
@@ -81,6 +91,32 @@ const Institutions = () => {
       toast.error('Error fetching organization types');
     }
   };
+  // Fetch the type options based on the selected organization type
+  const fetchTypeOptions = async (organizationType: string) => {
+    if (!organizationType) return;
+    
+    try {
+      const response = await axios.get(
+        `http://197.248.122.31:3000/api/detail-types?value=${organizationType}`
+      );
+
+      if (response.data.status === 1000) {
+        setTypeOptions(response.data.data); // Set the type options based on the response
+      } else {
+        toast.error('Error fetching type options');
+      }
+    } catch (error) {
+      console.error('Error fetching type options:', error);
+      toast.error('Error fetching type options');
+    }
+  };
+
+  // Trigger the API call when organization_type changes
+  useEffect(() => {
+    if (newInstitution.organization_type) {
+      fetchTypeOptions(newInstitution.organization_type);
+    }
+  }, [newInstitution.organization_type]); // Dependency on organization_type
 
   const handleAddInstitution = async () => {
     const token = localStorage.getItem('token');
