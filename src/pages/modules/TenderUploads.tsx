@@ -156,7 +156,7 @@ const navigate=useNavigate()
   };
 
   return (
-    <div className='min-h-screen'>
+    <div className=''>
       <div className='flex justify-between items-center mb-5'>
         <h1 className='text-xl font-bold'>{tenderNo? "Update Docuent Details":"Enter Document Details"}</h1>
       </div>

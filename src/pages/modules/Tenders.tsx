@@ -111,7 +111,7 @@ const Documents: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center pb-10">
-        <h1 className='text-2xl'>Documents List</h1>
+        <h1 className='text-2xl font-bold'>Documents List</h1>
         <div className='relative'>
           <input
             type='text'
@@ -142,17 +142,17 @@ const Documents: React.FC = () => {
       ) : (
         <table className='min-w-full bg-white text-sm '>
           <thead>
-            <tr>
-              <th className='py-4 px-4 border-b'>Beneficiary</th>
-              <th className='py-4 px-4 border-b'>Tender No</th>
-              <th className='py-4 px-4 border-b'>Date</th>
-              <th className='py-4 px-4 border-b'>Guarantee No</th>
-              <th className='py-4 px-4 border-b'>Guarantor</th>
-              <th className='py-4 px-4 border-b'>Applicant</th>
-              <th className='py-4 px-4 border-b'>Tender Amount</th>
-              <th className='py-4 px-4 border-b'>Expiry</th>
-              <th className='py-4 px-4 border-b'>Status</th>
-              <th className='py-4 px-4 border-b'>Action</th>
+          <tr className="bg-[rgb(92,72,155,0.9)]">
+              <th className='py-4 px-4'>Beneficiary</th>
+              <th className='py-4 px-4'>Tender No</th>
+              <th className='py-4 px-4'>Date</th>
+              <th className='py-4 px-4'>Guarantee No</th>
+              <th className='py-4 px-4'>Guarantor</th>
+              <th className='py-4 px-4'>Applicant</th>
+              <th className='py-4 px-4'>Tender Amount</th>
+              <th className='py-4 px-4'>Expiry</th>
+              <th className='py-4 px-4'>Status</th>
+              <th className='py-4 px-4'>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -179,7 +179,7 @@ const Documents: React.FC = () => {
               }
             
               return            (
-                <tr key={document.id} className={`text-center  ${index % 2 === 0 ? 'bg-gray-100' : ''}`}>
+                <tr key={document.id} className={`text-center  ${index % 2 !== 0 ? 'bg-[rgb(92,72,155,0.3)]' : ''}`}>
                   <td className='py-1.5 px-4'>{document.beneficiary}</td>
                   <td className='py-1.5 px-4'>{document.tender_number}</td>
                   <td className='py-1.5 px-4'>{new Date(document.date).toLocaleDateString()}</td>

@@ -64,7 +64,7 @@ const authState = useSelector((state: RootState) => state.auth);
         </div>
         <div className=' w-3/4 mx-auto'>
         <div >
-          <img src={gameLogo} alt="game-logo" className='h-[200px] w-full object-cover'/>
+          <img src={gameLogo} alt="game-logo" className='m-5 h-[350px] w-full object-cover'/>
 
         </div>
           {/* <p>Login into you account</p> */}

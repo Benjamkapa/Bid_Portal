@@ -33,14 +33,16 @@ const Institutions = () => {
   const [editInstitution, setEditInstitution] = useState<Institution | null>(null);
   const [showInputFields, setShowInputFields] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-
+  
   const [organizationTypes, setOrganizationTypes] = useState<string[]>([]);
+  const [typeOptions, setTypeOptions] = useState<string[]>([]); // State for the dependent type options
 
   useEffect(() => {
     fetchInstitutions();
     fetchOrganizationTypes(); // Fetch organization types when component mounts
   }, []);
 
+  // Fetch all institutions
   const fetchInstitutions = async () => {
     setLoading(true);
     try {
@@ -159,68 +161,74 @@ const Institutions = () => {
 
   return (
     <div>
-      <div className='flex items-center justify-between py-6'>
-        <h1 className='text-2xl mb-5 font-bold'>Institutions</h1>
-        <div className='flex items-center justify-center w-full'>
+      {/* Search and Add Institution Button */}
+      <div className="flex items-center justify-between py-6">
+        <h1 className="text-2xl mb-5 font-bold">Institutions</h1>
+        <div className="flex items-center justify-center w-full">
           <input
-            type='text'
-            placeholder='Search by Institution Name'
+            type="text"
+            placeholder="Search by Institution Name"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className='border p-2 rounded w-64'
+            className="border p-2 rounded w-64"
           />
-          <GoSearch size={23} className='relative top-.5 right-8 ' />
+          <GoSearch size={23} className="relative top-.5 right-8" />
         </div>
       </div>
-      <div className='py-2'>
+      <div className="py-2">
         <button
           onClick={() => {
             setShowInputFields(true);
             setEditInstitution(null);
           }}
-          className='bg-blue-500 text-black px-4 p-1 rounded-full flex items-center'
+          className="bg-blue-500 text-black px-4 p-1 rounded-full flex items-center"
         >
-          <FiPlus className='mr-2 ' /> Add Institution
+          <FiPlus className="mr-2 " /> Add Institution
         </button>
       </div>
+
+      {/* Table to Display Institutions */}
       {loading ? (
         <Skeleton count={10} height={40} />
       ) : institutions.length > 0 ? (
-        <table className='min-w-full bg-white text-left'>
+        <table className="min-w-full bg-white text-left">
           <thead>
-            <tr className='bg-gray-400 text-center'>
-              <th className='py-2 px-4 border-b'>Institution Name</th>
-              <th className='py-2 px-4 border-b'>Organization Category</th>
-              <th className='py-2 px-4 border-b'>Type</th>
-              <th className='py-2 px-4 border-b'>Balance</th>
-              <th className='py-2 px-4 border-b'>Rate</th>
-              <th className='py-2 px-4 border-b'>Date Created</th>
-              <th className='py-2 px-4 border-b'>Actions</th>
+            <tr className="bg-[rgb(92,72,155,0.9)] text-center">
+              <th className="py-2 px-4">Institution Name</th>
+              <th className="py-2 px-4">Organization Category</th>
+              <th className="py-2 px-4">Type</th>
+              <th className="py-2 px-4">Balance</th>
+              <th className="py-2 px-4">Rate</th>
+              <th className="py-2 px-4">Date Created</th>
+              <th className="py-2 px-4">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredInstitutions.map((institution, index) => (
-              <tr key={institution.id} className={`text-center ${index % 2 === 0 ? 'bg-gray-200' : ''}`}>
-                <td className='py-2 px-4'>{institution.institution_name}</td>
-                <td className='py-2 px-4'>{institution.organization_type}</td>
-                <td className='py-2 px-4'>{institution.type}</td>
-                <td className='py-2 px-4'>{formatCurrency(Number(institution.balance))}</td>
-                <td className='py-2 px-4'>{institution.rates}</td>
-                <td className='py-2 px-4'>
+              <tr
+                key={institution.id}
+                className={`text-center ${index % 2 !== 0 ? 'bg-[rgb(92,72,155,0.3)]' : ''}`}
+              >
+                <td className="py-2 px-4">{institution.institution_name}</td>
+                <td className="py-2 px-4">{institution.organization_type}</td>
+                <td className="py-2 px-4">{institution.type}</td>
+                <td className="py-2 px-4">{formatCurrency(Number(institution.balance))}</td>
+                <td className="py-2 px-4">{institution.rates}</td>
+                <td className="py-2 px-4">
                   {new Date(institution.created_at).toLocaleDateString()}
                 </td>
-                <td className='py-2 px-4'>
+                <td className="py-2 px-4">
                   <button
                     onClick={() => handleEditInstitution(institution)}
-                    className='text-blue-500 px-1 hover:text-blue-700'
+                    className="text-blue-500 px-1 hover:text-blue-700"
                   >
-                    <FiEdit size={20} title='Edit' />
+                    <FiEdit size={20} title="Edit" />
                   </button>
                   <button
                     onClick={() => handleDeleteInstitution(institution.id)}
-                    className='text-red-500 px-1 hover:text-red-700'
+                    className="text-red-500 px-1 hover:text-red-700"
                   >
-                    <FiTrash size={20} title='Delete' />
+                    <FiTrash size={20} title="Delete" />
                   </button>
                 </td>
               </tr>
@@ -230,21 +238,23 @@ const Institutions = () => {
       ) : (
         <div>No institutions available</div>
       )}
+
+      {/* Input Fields for Adding/Editing Institution */}
       {showInputFields && (
-        <div className='my-3' ref={inputRef}>
+        <div className="my-3" ref={inputRef}>
           <input
-            type='text'
-            placeholder='Institution Name'
+            type="text"
+            placeholder="Institution Name"
             value={newInstitution.institution_name}
             onChange={(e) => setNewInstitution({ ...newInstitution, institution_name: e.target.value })}
-            className='border p-2 rounded m-1'
+            className="border p-2 rounded m-1"
           />
           <input
-            type='text'
-            placeholder='Rates'
+            type="text"
+            placeholder="Rates"
             value={newInstitution.rates}
             onChange={(e) => setNewInstitution({ ...newInstitution, rates: e.target.value })}
-            className='border p-2 rounded m-1'
+            className="border p-2 rounded m-1"
           />
           <select
             value={newInstitution.organization_type || ''}
@@ -259,20 +269,25 @@ const Institutions = () => {
             ))}
           </select>
 
-          <input
-            type='text'
-            placeholder='Organization Type'
+          <select
             value={newInstitution.type || ''}
             onChange={(e) => setNewInstitution({ ...newInstitution, type: e.target.value })}
-            className='border p-2 rounded m-1'
-          />
+            className="border p-2 rounded m-1"
+          >
+            <option value="" disabled>Select Type</option>
+            {typeOptions.map((type, index) => (
+              <option key={index} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
 
           {editInstitution ? (
-            <button onClick={handleSaveEdit} className='bg-blue-500 text-black p-2 rounded'>
+            <button onClick={handleSaveEdit} className="bg-purple-500 text-black p-2 rounded">
               Save Changes
             </button>
           ) : (
-            <button onClick={handleAddInstitution} className='bg-blue-500 text-black p-2 rounded'>
+            <button onClick={handleAddInstitution} className="bg-blue-500 text-black p-2 rounded">
               Save Institution
             </button>
           )}

@@ -268,7 +268,7 @@ const Users: React.FC = () => {
             setEditUser(null);
             setIsAdmin(false);
           }}
-          className="bg-blue-500 text-black rounded-full px-2 py-1 cursor-pointer flex items-center"
+          className="bg-blue-500 text-black rounded-full px-2 py-1 cursor-pointer flex items-center hover:bg-blue-400"
         >
           <FiPlus className="mr-1" /> Add User
         </button>
@@ -281,7 +281,7 @@ const Users: React.FC = () => {
               setNewAdmin({ name: '', email: '', phone: '', institution_id: 0 });
               setEditUser(null);
             }}
-            className="bg-green-500 text-black rounded-full px-2 py-1 cursor-pointer flex items-center ml-4"
+            className="bg-[#DA67D9] text-black rounded-full px-2 py-1 cursor-pointer flex items-center ml-4 hover:bg-[rgb(218,103,217,.8)]"
           >
             <FiPlus className="mr-1" /> Add Admin
           </button>
@@ -294,18 +294,18 @@ const Users: React.FC = () => {
       ) : (
         <table className="min-w-full bg-white text-center">
           <thead>
-            <tr className="bg-gray-400">
-              <th className="py-2 px-4 border-b">Name</th>
-              <th className="py-2 px-4 border-b">Email</th>
-              <th className="py-2 px-4 border-b">Phone</th>
-              <th className="py-2 px-4 border-b">Institution Name</th>
-              <th className="py-2 px-4 border-b">Role</th>
-              <th className="py-2 px-4 border-b">Action</th>
+            <tr className="bg-[rgb(92,72,155,0.9)]">
+              <th className="py-2 px-4">Name</th>
+              <th className="py-2 px-4">Email</th>
+              <th className="py-2 px-4">Phone</th>
+              <th className="py-2 px-4">Institution Name</th>
+              <th className="py-2 px-4">Role</th>
+              <th className="py-2 px-4">Action</th>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.map((user, index) => (
-              <tr key={user.id} className={`text-center ${index % 2 === 0 ? 'bg-gray-200' : ''}`}>
+              <tr key={user.id} className={`text-center ${index % 2 !== 0 ? 'bg-[rgb(92,72,155,0.3)]' : ''}`}>
                 <td className="py-2 px-4">{user.name}</td>
                 <td className="py-2 px-4">{user.email}</td>
                 <td className="py-2 px-4">{user.phone}</td>
@@ -375,7 +375,7 @@ const Users: React.FC = () => {
                 </select>
                 <button
                   onClick={handleAddAdmin}
-                  className="bg-green-500 text-white py-2 px-4 rounded ml-2"
+                  className="bg-[#DA67D9] py-2 px-4 rounded ml-2 hover:bg-[rgb(218,103,217,.8)]"
                 >
                   Save Admin
                 </button>
@@ -406,7 +406,7 @@ const Users: React.FC = () => {
                 />
                 <button
                   onClick={editUser ? handleSaveEdit : handleAddUser}
-                  className="bg-blue-500 text-white py-2 px-4 rounded ml-2"
+                  className="bg-blue-500 py-2 px-4 rounded ml-2 hover:bg-blue-400"
                 >
                   {editUser ? 'Save Edit' : 'Save User'}
                 </button>

@@ -80,11 +80,11 @@ const Transaction: React.FC = () => {
       ) : (
         <table className="min-w-full bg-white">
           <thead>
-            <tr className="bg-gray-400">
-              <th className="py-2 px-4 border-b">Institution</th>
-              <th className="py-2 px-4 border-b">Amount</th>
-              <th className="py-2 px-4 border-b">Description</th>
-              <th className="py-2 px-4 border-b">Date</th>
+          <tr className="bg-[rgb(92,72,155,0.9)]">
+              <th className="py-2 px-4">Institution</th>
+              <th className="py-2 px-4">Amount</th>
+              <th className="py-2 px-4">Description</th>
+              <th className="py-2 px-4">Date</th>
             </tr>
           </thead>
           <tbody>
@@ -96,7 +96,7 @@ const Transaction: React.FC = () => {
               filteredTransactions.map((transaction, index) => (
                 <tr
                   key={transaction.id}
-                  className={`text-center ${index % 2 === 0 ? 'bg-gray-200' : ''}`}
+                  className={`text-center ${index % 2 !== 0 ? 'bg-[rgb(92,72,155,0.3)]' : ''}`}
                 >
                   <td className="py-2 px-4">{transaction.institution_name}</td>
                   <td className="py-2 px-4">{formatCurrency(Number(transaction.amount))}</td>

@@ -46,7 +46,7 @@ dispatch(getUserProfile())
 
   return (
     <div
-      className={`fixed top-0 h-16 bg-white text-black flex items-center justify-between px-6 transition-all duration-300 ${
+      className={`fixed top-0 h-16 text-black flex items-center justify-between px-6 transition-all duration-300 ${
         isCollapsed ? "left-20 w-[calc(100%-80px)]" : "left-60 w-[calc(100%-240px)]"
       }`}
     >
