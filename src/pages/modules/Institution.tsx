@@ -38,6 +38,7 @@ const Institutions = () => {
 
   useEffect(() => {
     fetchInstitutions();
+    fetchOrganizationTypes(); // Fetch organization types when component mounts
   }, []);
 
   const fetchInstitutions = async () => {
@@ -47,21 +48,10 @@ const Institutions = () => {
       const response = await axios.get('http://197.248.122.31:3000/api/all-institutions/', {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
-      // Type guard: Check if response.data is an array
+
       if (Array.isArray(response.data)) {
         const institutions = response.data as Institution[];
         setInstitutions(institutions);
-  
-        const types = [
-          ...new Set(
-            institutions
-              .map((institution: Institution) => institution.organization_type)
-              .filter((type: string | null) => type !== null && type !== undefined)
-          ),
-        ];
-  
-        setOrganizationTypes(types);
       } else {
         console.error('Invalid data format');
         toast.error('Error fetching institutions');
@@ -73,7 +63,22 @@ const Institutions = () => {
       setLoading(false);
     }
   };
-  
+
+  // Fetch organization types from the API
+  const fetchOrganizationTypes = async () => {
+    try {
+      const response = await axios.get('http://197.248.122.31:3000/api/organization_types');
+      if (response.data.status === 1000) {
+        setOrganizationTypes(response.data.data);
+      } else {
+        console.error('Error fetching organization types');
+        toast.error('Error fetching organization types');
+      }
+    } catch (error) {
+      console.error('Error fetching organization types:', error);
+      toast.error('Error fetching organization types');
+    }
+  };
 
   const handleAddInstitution = async () => {
     const token = localStorage.getItem('token');
@@ -278,3 +283,5 @@ const Institutions = () => {
 };
 
 export default Institutions;
+
+

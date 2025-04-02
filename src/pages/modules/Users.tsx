@@ -290,7 +290,7 @@ const Users: React.FC = () => {
 
       {/* Table of Users */}
       {loading ? (
-        <Skeleton height={10} count={20} />
+        <Skeleton height={10} count={40} />
       ) : (
         <table className="min-w-full bg-white text-center">
           <thead>
