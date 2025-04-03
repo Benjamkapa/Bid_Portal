@@ -229,7 +229,7 @@ const Institutions = () => {
       ) : institutions.length > 0 ? (
         <table className="min-w-full bg-white text-left">
           <thead>
-            <tr className="bg-[rgb(92,72,155,0.9)] text-center">
+            <tr className="bg-[rgb(92,72,155,0.9)] text-white text-center">
               <th className="py-2 px-4">Institution Name</th>
               <th className="py-2 px-4">Organization Category</th>
               <th className="py-2 px-4">Type</th>

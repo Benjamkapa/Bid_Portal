@@ -80,7 +80,7 @@ const Transaction: React.FC = () => {
       ) : (
         <table className="min-w-full bg-white">
           <thead>
-          <tr className="bg-[rgb(92,72,155,0.9)]">
+          <tr className="bg-[rgb(92,72,155,0.9)] text-white text-center">
               <th className="py-2 px-4">Institution</th>
               <th className="py-2 px-4">Amount</th>
               <th className="py-2 px-4">Description</th>
@@ -95,7 +95,7 @@ const Transaction: React.FC = () => {
             ) : (
               filteredTransactions.map((transaction, index) => (
                 <tr
-                  key={transaction.id}
+                  key={transaction.institution_id}
                   className={`text-center ${index % 2 !== 0 ? 'bg-[rgb(92,72,155,0.3)]' : ''}`}
                 >
                   <td className="py-2 px-4">{transaction.institution_name}</td>

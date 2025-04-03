@@ -142,7 +142,7 @@ const Documents: React.FC = () => {
       ) : (
         <table className='min-w-full bg-white text-sm '>
           <thead>
-          <tr className="bg-[rgb(92,72,155,0.9)]">
+          <tr className="bg-[rgb(92,72,155,0.9)] text-center text-white">
               <th className='py-4 px-4'>Beneficiary</th>
               <th className='py-4 px-4'>Tender No</th>
               <th className='py-4 px-4'>Date</th>

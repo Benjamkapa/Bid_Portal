@@ -294,7 +294,7 @@ const Users: React.FC = () => {
       ) : (
         <table className="min-w-full bg-white text-center">
           <thead>
-            <tr className="bg-[rgb(92,72,155,0.9)]">
+            <tr className="bg-[rgb(92,72,155,0.9)] text-white text-center">
               <th className="py-2 px-4">Name</th>
               <th className="py-2 px-4">Email</th>
               <th className="py-2 px-4">Phone</th>
