@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {  RootState } from "../redux/store";
 import { getUserProfile, logout } from '../redux/authSlice';
 import { store } from '../redux/store';
+import { FiLogOut } from 'react-icons/fi';
 
 interface NavbarProps {
   isCollapsed: boolean;
@@ -47,7 +48,7 @@ dispatch(getUserProfile())
   return (
     <div
         className={`fixed top-0 h-16 text-black flex items-center justify-between px-6 transition-all duration-300 
-          bg-gradient-to-r from-blue-400 via-purple-600 to-black ${
+          bg-gradient-to-r from-blue-200 via-violet-300 to-violet-900 ${
             isCollapsed ? "left-18 w-[calc(100%-60px)]" : "left-60 w-[calc(100%-200px)]"
           }`}
       >
@@ -57,10 +58,10 @@ dispatch(getUserProfile())
 
       </div>
       <button
-        className="px-5 py-2 bg-blue-400 rounded-full cursor-pointer"
         onClick={handleLogout}
+        title='Logout'
       >
-        Logout
+        <FiLogOut className="cursor-pointer" size={15}/>
       </button>
     </div>
   );
