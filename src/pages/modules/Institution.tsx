@@ -33,7 +33,7 @@ const Institutions = () => {
   const [editInstitution, setEditInstitution] = useState<Institution | null>(null);
   const [showInputFields, setShowInputFields] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  
+
   const [organizationTypes, setOrganizationTypes] = useState<string[]>([]);
   const [typeOptions, setTypeOptions] = useState<string[]>([]); // State for the dependent type options
 
@@ -91,10 +91,11 @@ const Institutions = () => {
       toast.error('Error fetching organization types');
     }
   };
+
   // Fetch the type options based on the selected organization type
   const fetchTypeOptions = async (organizationType: string) => {
     if (!organizationType) return;
-    
+
     try {
       const response = await axios.get(
         `http://197.248.122.31:3000/api/detail-types?value=${organizationType}`
@@ -334,5 +335,3 @@ const Institutions = () => {
 };
 
 export default Institutions;
-
-

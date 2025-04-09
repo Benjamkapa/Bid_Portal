@@ -7,7 +7,6 @@ import { NavLink } from "react-router-dom";
 import {
   FiChevronRight,
   FiChevronLeft,
-  FiHome,
   FiFileText,
   FiCheckSquare,
   FiUpload,
@@ -15,13 +14,16 @@ import {
   FiDollarSign,
   // FiUsers,
   FiUser,
-} from "react-icons/fi";
+} from "react-icons/fi"; 
+import { MdDashboard } from "react-icons/md";
+
+
 interface SidebarProps {
   isCollapsed: boolean;
   setIsCollapsed: (collapsed: boolean) => void;
 }
 const menuItems = [
-  { icon: <FiHome size={24} />, label: "Dashboard", path: "/" },
+  { icon: <MdDashboard size={24} />, label: "Dashboard", path: "/" },
   { icon: <FiUpload size={24} />, label: "Upload Documents", path: "/uploads" },
   { icon: <FiFileText size={24} />, label: "Documents", path: "/tenders" },
   { icon: <FiCheckSquare size={24} />, label: "Verify Documents", path: "/verify" },
