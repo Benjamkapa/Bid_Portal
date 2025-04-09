@@ -15,6 +15,10 @@ interface Institution {
   rates: string;
   created_at: string;
   organization_type: string;
+  address?: string;
+  contact_person?: string;
+  email_address?: string;
+  phone_number?: string;
 }
 
 const Institutions = () => {
@@ -29,6 +33,10 @@ const Institutions = () => {
     balance: 0,
     created_at: '',
     organization_type: '',
+    address: '',
+    contact_person: '',
+    email_address: '',
+    phone_number: '',
   });
   const [editInstitution, setEditInstitution] = useState<Institution | null>(null);
   const [showInputFields, setShowInputFields] = useState(false);
@@ -158,6 +166,10 @@ const Institutions = () => {
             organization_type: newInstitution.organization_type,
             rates: newInstitution.rates,
             type: newInstitution.type,
+            address: newInstitution.address,
+            contact_person: newInstitution.contact_person,
+            email_address: newInstitution.email_address,
+            phone_number: newInstitution.phone_number,
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -195,6 +207,15 @@ const Institutions = () => {
   const filteredInstitutions = institutions.filter((institution) =>
     institution.institution_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewInstitution((prevInstitution) => ({
+      ...prevInstitution,
+      [name]: value,
+    }));
+  };
 
   return (
     <div>
@@ -280,54 +301,92 @@ const Institutions = () => {
       {showInputFields && (
         <div className="my-3" ref={inputRef}>
           <input
+            name="institution_name"
             type="text"
             placeholder="Institution Name"
             value={newInstitution.institution_name}
-            onChange={(e) => setNewInstitution({ ...newInstitution, institution_name: e.target.value })}
+            onChange={handleInputChange}
             className="border p-2 rounded m-1"
           />
           <input
+            name="rates"
             type="text"
             placeholder="Rates"
             value={newInstitution.rates}
-            onChange={(e) => setNewInstitution({ ...newInstitution, rates: e.target.value })}
+            onChange={handleInputChange}
             className="border p-2 rounded m-1"
           />
+          <input
+            name="address"
+            type="text"
+            placeholder="Address"
+            value={newInstitution.address}
+            onChange={handleInputChange}
+            className="border p-2 rounded m-1"
+          />
+          <input
+            name="contact_person"
+            type="text"
+            placeholder="Contact Person"
+            value={newInstitution.contact_person}
+            onChange={handleInputChange}
+            className="border p-2 rounded m-1"
+          />
+          <input
+            name="email_address"
+            type="email"
+            placeholder="Email Address"
+            value={newInstitution.email_address}
+            onChange={handleInputChange}
+            className="border p-2 rounded m-1"
+          />
+          <input
+            name="phone_number"
+            type="tel"
+            placeholder="Phone Number"
+            value={newInstitution.phone_number}
+            onChange={handleInputChange}
+            className="border p-2 rounded m-1"
+          />
+
+          {/* Organization Type Dropdown */}
           <select
-            value={newInstitution.organization_type || ''}
-            onChange={(e) => setNewInstitution({ ...newInstitution, organization_type: e.target.value })}
+            name="organization_type"
+            value={newInstitution.organization_type}
+            onChange={handleInputChange}
             className="border p-2 rounded m-1"
           >
-            <option value="" disabled>Select Organization Category</option>
-            {organizationTypes.map((type, index) => (
-              <option key={index} value={type}>
+            <option value="">Select Organization Type</option>
+            {organizationTypes.map((type) => (
+              <option key={type} value={type}>
                 {type}
               </option>
             ))}
           </select>
 
-          <select
-            value={newInstitution.type || ''}
-            onChange={(e) => setNewInstitution({ ...newInstitution, type: e.target.value })}
-            className="border p-2 rounded m-1"
-          >
-            <option value="" disabled>Select Type</option>
-            {typeOptions.map((type, index) => (
-              <option key={index} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-
-          {editInstitution ? (
-            <button onClick={handleSaveEdit} className="bg-purple-500 text-black p-2 rounded">
-              Save Changes
-            </button>
-          ) : (
-            <button onClick={handleAddInstitution} className="bg-blue-500 text-black p-2 rounded">
-              Save Institution
-            </button>
+          {/* Type Dropdown */}
+          {newInstitution.organization_type && (
+            <select
+              name="type"
+              value={newInstitution.type || ''}
+              onChange={handleInputChange}
+              className="border p-2 rounded m-1"
+            >
+              <option value="">Select Type</option>
+              {typeOptions.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
           )}
+
+          <button
+            onClick={editInstitution ? handleSaveEdit : handleAddInstitution}
+            className="bg-blue-500 text-white p-2 rounded mt-2"
+          >
+            {editInstitution ? 'Save Changes' : 'Add Institution'}
+          </button>
         </div>
       )}
     </div>

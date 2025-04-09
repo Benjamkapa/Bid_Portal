@@ -13,6 +13,7 @@ import Transaction from "../pages/modules/Transaction";
 import UserGroups from "../pages/modules/UserGroups";
 import Users from "../pages/modules/Users";
 import PrivateRoute from "./PrivateRoute";
+import Applications from "../pages/modules/Application";
 
 
 const router = createBrowserRouter([
@@ -71,6 +72,22 @@ const router = createBrowserRouter([
       },
       {
         path: "/institutions",
+        element: (
+          
+            <Institution />
+          
+        ),
+      },
+      {
+        path: "/applications",
+        element: (
+          
+            <Applications />
+          
+        ),
+      },
+      {
+        path: "/institutions/issued-securities",
         element: (
           
             <Institution />
