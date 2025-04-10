@@ -281,7 +281,8 @@ const Applications: React.FC = () => {
         {/* Uploads */}
         <div className='gap-4 col-span-1 flex md:col-span-3 flex-wrap'>
           <div className='w-full py-5'>
-            <b><i>Upload Documents</i></b>
+            <b><i>Required Documents</i></b>
+            <i><p className='pb-3 text-gray-600'>Please upload all required company documents in PDF format</p></i>
             <div className='flex flex-wrap gap-4'>
               <div className='w-full sm:w-1/3 lg:w-1/4'>
                 <p>KRA PIN</p>
