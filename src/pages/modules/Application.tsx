@@ -30,7 +30,12 @@ const Applications: React.FC = () => {
     duration: '',
   });
 
-  const [files, setFiles] = useState<(File | null)[]>(Array(6).fill(null));
+  const [kraPinFile, setKraPinFile] = useState<File | null>(null);
+  const [cr12File, setCr12File] = useState<File | null>(null);
+  const [registrationFile, setRegistrationFile] = useState<File | null>(null);
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [taxComplianceFile, setTaxComplianceFile] = useState<File | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [tenderId, setTenderId] = useState('');
@@ -84,11 +89,25 @@ const Applications: React.FC = () => {
     });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const selectedFile = e.target.files ? e.target.files[0] : null;
-    const updatedFiles = [...files];
-    updatedFiles[index] = selectedFile;
-    setFiles(updatedFiles);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    switch (type) {
+      case 'kraPin':
+        setKraPinFile(file);
+        break;
+      case 'cr12':
+        setCr12File(file);
+        break;
+      case 'registration':
+        setRegistrationFile(file);
+        break;
+      case 'profile':
+        setProfileFile(file);
+        break;
+      case 'taxCompliance':
+        setTaxComplianceFile(file);
+        break;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,11 +125,24 @@ const Applications: React.FC = () => {
         data.append('user_id', authState.user.id);
       }
 
-      files.forEach((file, index) => {
-        if (file) {
-          data.append(`document${index + 1}`, file);
+      if (kraPinFile) data.append('kraPinDocument', kraPinFile);
+      if (cr12File) data.append('cr12Document', cr12File);
+      if (registrationFile) data.append('registrationDocument', registrationFile);
+      if (profileFile) data.append('profileDocument', profileFile);
+      if (taxComplianceFile) data.append('taxComplianceDocument', taxComplianceFile);
+
+      console.log('Form Data Contents:');
+      for (let [key, value] of data.entries()) {
+        if (value instanceof File) {
+          console.log(`${key}:`, {
+            name: value.name,
+            type: value.type,
+            size: `${(value.size / 1024).toFixed(2)} KB`
+          });
+        } else {
+          console.log(`${key}:`, value);
         }
-      });
+      }
 
       if (isEditing) {
         await axios.put(`${API_URL}/edit-tender/${tenderId}`, data, {
@@ -137,14 +169,13 @@ const Applications: React.FC = () => {
     }
   };
 
-  const documentTitles = [
-    'KRA PIN',
-    'CR2',
-    'TAX Compliance',
-    'Certificate of Incorporation',
-    'Director ID',
-    'Company Profile',
-  ];
+  // const documentTitles = [
+  //   'KRA PIN',
+  //   'CR12',
+  //   'Company Registration Certificate',
+  //   'Company Profile',
+  //   'Tax Compliance'
+  // ];
 
   return (
     <div>
@@ -252,17 +283,46 @@ const Applications: React.FC = () => {
           <div className='w-full py-5'>
             <b><i>Upload Documents</i></b>
             <div className='flex flex-wrap gap-4'>
-              {documentTitles.map((title, index) => (
-                <div key={index} className='w-full sm:w-1/3 lg:w-1/4'>
-                  <p>{title}</p>
-                  <input
-                    type='file'
-                    name={`document${index + 1}`}
-                    className='border p-2 rounded w-full'
-                    onChange={(e) => handleFileChange(e, index)}
-                  />
-                </div>
-              ))}
+              <div className='w-full sm:w-1/3 lg:w-1/4'>
+                <p>KRA PIN</p>
+                <input
+                  type='file'
+                  className='border p-2 rounded w-full'
+                  onChange={(e) => handleFileChange(e, 'kraPin')}
+                />
+              </div>
+              <div className='w-full sm:w-1/3 lg:w-1/4'>
+                <p>CR12</p>
+                <input
+                  type='file'
+                  className='border p-2 rounded w-full'
+                  onChange={(e) => handleFileChange(e, 'cr12')}
+                />
+              </div>
+              <div className='w-full sm:w-1/3 lg:w-1/4'>
+                <p>Company Registration Certificate</p>
+                <input
+                  type='file'
+                  className='border p-2 rounded w-full'
+                  onChange={(e) => handleFileChange(e, 'registration')}
+                />
+              </div>
+              <div className='w-full sm:w-1/3 lg:w-1/4'>
+                <p>Company Profile</p>
+                <input
+                  type='file'
+                  className='border p-2 rounded w-full'
+                  onChange={(e) => handleFileChange(e, 'profile')}
+                />
+              </div>
+              <div className='w-full sm:w-1/3 lg:w-1/4'>
+                <p>Tax Compliance</p>
+                <input
+                  type='file'
+                  className='border p-2 rounded w-full'
+                  onChange={(e) => handleFileChange(e, 'taxCompliance')}
+                />
+              </div>
             </div>
           </div>
 
