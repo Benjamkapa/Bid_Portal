@@ -155,7 +155,7 @@ const Applications: React.FC = () => {
       <form onSubmit={handleSubmit} autoComplete='off' className='grid grid-cols-1 md:grid-cols-3 gap-4 bg-white rounded p-5 w-full'>
         <div>
           <p>Security type</p>
-          <select name='document_type' className='p-2 border w-full'>
+          <select name='document_type' className='p-2 border rounded w-full'>
             <option value=''>Bid security</option>
             <option value=''>Performance security</option>
             <option value=''>Performance guarantee</option>
@@ -278,10 +278,10 @@ const Applications: React.FC = () => {
           </div>
         </div>
 
-        <div className='col-span-1 md:col-span-3 flex justify-end'>
+        <div className='w-1/3 md:col-span-3 justify-end hover: bg-blue-900 rounded-box'>
           <Button
-            color='bg-red-500'
-            width='1/2'
+            color='bg-blue-500'
+            
             text={tenderNo ? 'Update' : 'Apply'}
             onClick={handleSubmit}
             isLoading={loading}
